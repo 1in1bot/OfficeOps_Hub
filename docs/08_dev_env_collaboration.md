@@ -354,10 +354,10 @@ src
 ## 13. 문서 관리 규칙
 
 - 기능 변경 전 관련 문서를 먼저 수정한다.
-- API 변경 시 `05-api-spec.md`를 수정한다.
-- 상태/권한 변경 시 `06-status-permission-policy.md`를 수정한다.
-- DB 변경 시 `04-erd-db-design.md`와 Flyway migration을 함께 수정한다.
-- 테스트 기준 변경 시 `07-test-plan.md`를 수정한다.
+- API 변경 시 `05_api_spec.md`를 수정한다.
+- 상태/권한 변경 시 `06_status_permission_policy.md`를 수정한다.
+- DB 변경 시 `04_erd_db_design.md`와 Flyway migration을 함께 수정한다.
+- 테스트 기준 변경 시 `07_test_plan.md`를 수정한다.
 
 ## 14. 배포 전 체크리스트
 
