@@ -1,14 +1,30 @@
-# OfficeOps Hub 개발 환경 및 협업 규칙
+# OfficeOps Hub Team Charter
 
 ## 1. 문서 목적
 
-이 문서는 `OfficeOps Hub`의 로컬 개발 환경, 실행 방법, 환경변수, 브랜치 전략, 커밋/PR/이슈 규칙을 정의한다.
+이 문서는 `OfficeOps Hub` 팀의 운영 방식, 역할 합의, 로컬 개발 환경, 실행 방법, 환경변수, 브랜치 전략, 커밋/PR/이슈 규칙을 정의한다.
 
 팀원 간 개발 환경 차이를 줄이고, 작업 단위를 명확히 관리하는 것을 목적으로 한다.
 
-## 2. 기술 스택
+## 2. 팀 운영 원칙
 
-### 2.1 Backend
+- 핵심 설계 결정은 팀 회의에서 합의한다.
+- 기능 구현 전 관련 문서를 먼저 확인하고, 변경이 필요하면 문서를 먼저 수정한다.
+- 백엔드와 프론트엔드는 역할을 나누되 API 명세, 권한 정책, QA는 함께 검토한다.
+- 일정이 지연되면 2순위 기능을 줄이고 MVP 핵심 흐름을 우선 완성한다.
+- PR은 작은 기능 단위로 만들고, 리뷰 후 병합한다.
+
+## 3. 역할 합의
+
+| 역할 | 주요 책임 | 주요 산출물 |
+| --- | --- | --- |
+| 백엔드 담당 | 인증/인가, 요청 API, 상태 전이, DB 설계, 이력 저장, 테스트 | API, Entity, Service, Repository, 테스트 코드 |
+| 프론트엔드 담당 | React 화면, 라우팅 보호, 요청/예약/자산 화면, 관리자 대시보드 | 페이지, 컴포넌트, API 연동, 상태 관리 |
+| 공통 | 요구사항 정리, API 명세, ERD, README, 발표자료, QA | 문서 산출물, 이슈, PR 리뷰, 시연 흐름 |
+
+## 4. 기술 스택
+
+### 4.1 Backend
 
 | 기술 | 버전/기준 |
 | --- | --- |
@@ -21,7 +37,7 @@
 | API 문서 | Swagger/OpenAPI |
 | Test | JUnit 5, Mockito |
 
-### 2.2 Frontend
+### 4.2 Frontend
 
 | 기술 | 버전/기준 |
 | --- | --- |
@@ -33,7 +49,7 @@
 | Client State | Zustand |
 | CSS | Tailwind CSS |
 
-### 2.3 Infra
+### 4.3 Infra
 
 | 기술 | 용도 |
 | --- | --- |
@@ -43,7 +59,7 @@
 | GitHub Actions | CI |
 | Nginx | 정적 파일 서빙, Reverse Proxy |
 
-## 3. 권장 프로젝트 구조
+## 5. 권장 프로젝트 구조
 
 ```text
 officeops-hub
@@ -62,9 +78,9 @@ officeops-hub
 
 현재 문서 작업은 `docs` 기준으로 관리한다.
 
-## 4. 로컬 실행 환경
+## 6. 로컬 실행 환경
 
-### 4.1 필수 설치
+### 6.1 필수 설치
 
 | 도구 | 권장 |
 | --- | --- |
@@ -74,7 +90,7 @@ officeops-hub
 | Docker Desktop | 최신 안정 버전 |
 | Git | 최신 안정 버전 |
 
-### 4.2 Docker Compose 서비스
+### 6.2 Docker Compose 서비스
 
 로컬 개발에서는 PostgreSQL을 Docker Compose로 실행한다.
 
@@ -88,9 +104,9 @@ frontend
 
 초기에는 DB만 Docker로 실행하고 백엔드/프론트는 로컬 실행해도 된다.
 
-## 5. 환경변수
+## 7. 환경변수
 
-### 5.1 Backend
+### 7.1 Backend
 
 ```text
 SPRING_PROFILES_ACTIVE=local
@@ -108,7 +124,7 @@ JWT_ACCESS_TOKEN_EXPIRES_IN=3600000
 CORS_ALLOWED_ORIGINS=http://localhost:5173
 ```
 
-### 5.2 Frontend
+### 7.2 Frontend
 
 ```text
 VITE_API_BASE_URL=http://localhost:8080/api
@@ -120,22 +136,22 @@ VITE_API_BASE_URL=http://localhost:8080/api
 - `.env` 파일은 `.gitignore`에 포함한다.
 - 예시 파일은 `.env.example`로 제공한다.
 
-## 6. 실행 명령
+## 8. 실행 명령
 
-### 6.1 DB 실행
+### 8.1 DB 실행
 
 ```bash
 docker compose up -d postgres
 ```
 
-### 6.2 Backend 실행
+### 8.2 Backend 실행
 
 ```bash
 cd backend
 ./gradlew bootRun
 ```
 
-### 6.3 Frontend 실행
+### 8.3 Frontend 실행
 
 ```bash
 cd frontend
@@ -143,7 +159,7 @@ npm install
 npm run dev
 ```
 
-### 6.4 테스트
+### 8.4 테스트
 
 Backend:
 
@@ -160,7 +176,7 @@ npm run test
 npm run lint
 ```
 
-## 7. 프로파일
+## 9. 프로파일
 
 | 프로파일 | 용도 |
 | --- | --- |
@@ -174,7 +190,7 @@ npm run lint
 - `application-test.yml`: 테스트 DB 또는 Testcontainers
 - `application-prod.yml`: 운영 환경변수 기반 설정
 
-## 8. Git 브랜치 전략
+## 10. Git 브랜치 전략
 
 기본 브랜치:
 
@@ -202,7 +218,7 @@ infra/docker-compose
 - 기능 단위로 브랜치를 작게 나눈다.
 - PR merge 전 테스트를 통과해야 한다.
 
-## 9. 커밋 메시지 규칙
+## 11. 커밋 메시지 규칙
 
 형식:
 
@@ -232,7 +248,7 @@ docs(api): 요청 승인 API 명세 추가
 test(request): 상태 전이 테스트 추가
 ```
 
-## 10. Issue 규칙
+## 12. Issue 규칙
 
 이슈 제목:
 
@@ -268,7 +284,7 @@ test(request): 상태 전이 테스트 추가
 | enhancement | 개선 |
 | high-priority | 우선순위 높음 |
 
-## 11. PR 규칙
+## 13. PR 규칙
 
 PR 제목:
 
@@ -301,9 +317,9 @@ PR 본문:
 - 예외 처리가 공통 형식을 따르는가
 - 불필요한 리팩터링이 섞이지 않았는가
 
-## 12. 코드 스타일
+## 14. 코드 스타일
 
-### 12.1 Backend
+### 14.1 Backend
 
 - 패키지는 기능 단위로 구성한다.
 - Controller, Service, Repository 책임을 분리한다.
@@ -328,7 +344,7 @@ com.officeops
  └─ common
 ```
 
-### 12.2 Frontend
+### 14.2 Frontend
 
 - 페이지는 `pages`에 둔다.
 - 도메인별 기능 코드는 `features`에 둔다.
@@ -351,15 +367,15 @@ src
  └─ utils
 ```
 
-## 13. 문서 관리 규칙
+## 15. 문서 관리 규칙
 
 - 기능 변경 전 관련 문서를 먼저 수정한다.
-- API 변경 시 `05-api-spec.md`를 수정한다.
-- 상태/권한 변경 시 `06-status-permission-policy.md`를 수정한다.
-- DB 변경 시 `04-erd-db-design.md`와 Flyway migration을 함께 수정한다.
-- 테스트 기준 변경 시 `07-test-plan.md`를 수정한다.
+- API 변경 시 `docs/specifications/05_api_spec.md`를 수정한다.
+- 상태/권한 변경 시 `docs/specifications/06_status_permission_policy.md`를 수정한다.
+- DB 변경 시 `docs/specifications/04_erd_db_design.md`와 Flyway migration을 함께 수정한다.
+- 테스트 기준 변경 시 `docs/specifications/07_test_plan.md`를 수정한다.
 
-## 14. 배포 전 체크리스트
+## 16. 배포 전 체크리스트
 
 - [ ] 백엔드 테스트 통과
 - [ ] 프론트 빌드 성공
