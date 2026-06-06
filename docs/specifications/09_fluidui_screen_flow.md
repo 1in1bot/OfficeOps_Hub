@@ -4,7 +4,7 @@
 
 이 문서는 `OfficeOps Hub`의 화면 흐름을 Fluid UI 또는 유사한 와이어프레임 도구에서 바로 구성할 수 있도록 정리한 화면흐름도 문서다.
 
-기존 문서 중 `03-screen-spec.md`, `06-status-permission-policy.md`를 기준으로 화면 노드, 이동 경로, 권한별 분기, 주요 액션 흐름을 정의한다.
+기존 문서 중 `03_screen_spec.md`, `06_status_permission_policy.md`를 기준으로 화면 노드, 이동 경로, 권한별 분기, 주요 액션 흐름을 정의한다.
 
 ## 2. Fluid UI 작성 기준
 
