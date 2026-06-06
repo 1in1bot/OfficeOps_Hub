@@ -1,10 +1,10 @@
-# OfficeOps Hub 상세 기획안
+# OfficeOps Hub Detailed Plan
 
 ## 1. 프로젝트 개요
 
-`OfficeOps Hub`는 회사 내부에서 발생하는 비품 요청, 회의실 예약, 방문 신청, 자산 대여/반납 업무를 직원과 관리자가 한곳에서 처리할 수 있는 사내 운영 관리 플랫폼이다.
+`OfficeOps Hub`는 회사 내부에서 발생하는 비품 요청, 회의실 예약, 방문 신청, 자산 대여/반납 업무를 일반 직원, 팀장, 운영 담당자, 관리자가 한곳에서 처리할 수 있는 사내 운영 관리 플랫폼이다.
 
-직원은 필요한 요청을 등록하고 진행 상태를 확인할 수 있으며, 관리자는 접수된 요청을 승인, 반려, 처리 중, 완료 상태로 관리한다. 모든 상태 변경은 이력으로 저장되어 요청 처리 과정을 추적할 수 있다.
+직원은 필요한 요청을 등록하고 진행 상태를 확인할 수 있으며, 팀장은 소속 팀원의 요청을 1차 승인하거나 반려한다. 운영 담당자는 팀장 승인 완료 요청을 최종 승인하고 담당자와 마감일을 지정하며, 관리자는 전체 요청과 운영 현황을 관리한다. 모든 상태 변경은 이력으로 저장되어 요청 처리 과정을 추적할 수 있다.
 
 이 프로젝트는 단순 게시판형 CRUD를 넘어 실제 업무 시스템에서 필요한 권한 관리, 상태 전이, 예약 충돌 방지, 자산 상태 관리, 검색/필터, 대시보드 기능을 포함하는 것을 목표로 한다.
 
@@ -37,8 +37,10 @@
 
 ```text
 직원이 요청한다
--> 관리자가 확인한다
--> 승인, 반려, 처리 중, 완료 상태로 변경한다
+-> 팀장이 1차 승인 또는 반려한다
+-> 운영 담당자가 최종 승인 또는 반려한다
+-> 담당자와 마감일을 지정한다
+-> 처리 중, 완료 상태로 변경한다
 -> 자산 또는 예약 상태가 함께 변경된다
 -> 모든 처리 과정이 이력으로 남는다
 -> 관리자는 대시보드에서 운영 현황을 확인한다
@@ -52,14 +54,14 @@ MVP 핵심 문장은 다음과 같다.
 
 ## 4. 주요 사용자
 
-| 역할 | 설명 | 주요 기능 |
-| --- | --- | --- |
-| 일반 직원 | 사내 요청과 예약을 등록하는 사용자 | 요청 등록, 내 요청 조회, 예약 신청, 요청 취소, 자산 조회 |
-| 관리자 | 요청, 자산, 예약을 관리하는 운영 담당자 | 전체 요청 조회, 승인/반려, 자산 관리, 예약 관리, 통계 확인 |
+| 역할 | 권한 코드 | 설명 | 주요 기능 |
+| --- | --- | --- | --- |
+| 일반 직원 | ROLE_USER | 사내 요청과 예약을 등록하는 사용자 | 요청 등록, 내 요청 조회, 예약 신청, 요청 취소, 자산 조회 |
+| 팀장 | ROLE_MANAGER | 소속 팀원의 요청을 1차 검토하는 사용자 | 팀 승인 요청 조회, 1차 승인/반려 |
+| 운영 담당자 | ROLE_OPERATOR | 자산, 시설, 예약 관련 요청을 최종 처리하는 사용자 | 최종 승인/반려, 담당자 지정, 마감일 관리, 처리 중/완료 |
+| 관리자 | ROLE_ADMIN | 전체 운영을 총괄하는 사용자 | 전체 요청, 예약, 자산, 사용자, 자원, 감사 이력 관리 |
 
-초기 버전에서는 `ROLE_USER`, `ROLE_ADMIN` 두 권한만 사용한다.
-
-추후 확장 시 부서 관리자, 총관리자, 요청 담당자 권한을 추가할 수 있다.
+MVP에서는 위 4개 권한을 기준으로 화면 접근과 API 접근을 분리한다.
 
 ## 5. 주요 기능 범위
 
@@ -71,15 +73,16 @@ MVP 핵심 문장은 다음과 같다.
 | 인증 | 로그인 | JWT 기반 로그인 |
 | 인증 | 로그아웃 | 클라이언트 토큰 제거, Refresh Token 사용 시 서버 측 무효화 |
 | 인증 | 내 정보 조회 | 로그인한 사용자 정보 조회 |
-| 권한 | 사용자/관리자 권한 분리 | 관리자 API는 관리자만 접근 가능 |
+| 권한 | 역할별 권한 분리 | 팀장, 운영 담당자, 관리자 API는 역할별로 접근 제한 |
 | 요청 | 요청 등록 | 비품 요청, 방문 신청, 시설 요청 등 등록 |
 | 요청 | 요청 목록 조회 | 내 요청 또는 전체 요청 조회 |
 | 요청 | 요청 상세 조회 | 요청 내용, 상태, 이력, 관리자 메모 확인 |
 | 요청 | 요청 수정 | 접수 상태의 본인 요청만 수정 가능 |
 | 요청 | 요청 취소 | 완료 전 요청 취소 가능 |
-| 관리자 | 승인/반려 | 요청을 승인 또는 반려 처리 |
-| 관리자 | 처리 상태 변경 | 승인된 요청을 처리 중, 완료로 변경 |
-| 관리자 | 반려 사유/메모 | 반려 또는 처리 과정에서 관리자 메모 저장 |
+| 팀장 | 1차 승인/반려 | 소속 팀원의 요청을 승인 또는 반려 처리 |
+| 운영 | 최종 승인/반려 | 팀장 승인 완료 요청을 최종 승인 또는 반려 처리 |
+| 운영 | 처리 상태 변경 | 승인된 요청을 처리 중, 완료로 변경 |
+| 운영 | 반려 사유/메모 | 반려 또는 처리 과정에서 관리자 메모 저장 |
 | 이력 | 상태 변경 이력 | 모든 요청 상태 변경을 이력으로 저장 |
 | 예약 | 회의실 예약 | 날짜, 시작 시간, 종료 시간, 목적 입력 |
 | 예약 | 중복 예약 방지 | 같은 자원에 겹치는 시간 예약 차단 |
@@ -131,16 +134,32 @@ MVP 핵심 문장은 다음과 같다.
 | 자산 목록 | 사용 가능한 자산 조회 |
 | 내 정보 | 이름, 부서 등 기본 정보 확인 |
 
-### 6.3 관리자 화면
+### 6.3 팀장 화면
+
+| 화면 | 설명 |
+| --- | --- |
+| 팀 승인 요청함 | 소속 팀원의 승인 대기 요청 조회 |
+| 팀 승인 요청 상세 | 요청 내용 확인, 1차 승인/반려 |
+
+### 6.4 운영 담당자 화면
+
+| 화면 | 설명 |
+| --- | --- |
+| 운영 요청함 | 최종 승인 대기, 미배정, 처리 중 요청 조회 |
+| 운영 요청 상세 | 최종 승인/반려, 담당자 지정, 마감일 관리, 처리 중/완료 |
+
+### 6.5 관리자 화면
 
 | 화면 | 설명 |
 | --- | --- |
 | 관리자 대시보드 | 요청, 예약, 자산 현황 통계 |
 | 전체 요청 관리 | 전체 요청 조회, 필터, 상태 변경 |
-| 요청 상세 관리 | 승인, 반려, 처리 중, 완료, 관리자 메모 |
+| 요청 상세 관리 | 최종 승인, 반려, 담당자 변경, 처리 중, 완료, 관리자 메모 |
 | 자산 관리 | 자산 등록, 수정, 상태 변경 |
 | 예약 관리 | 전체 예약 조회, 취소 처리 |
-| 사용자 관리 | 사용자 목록 조회, 권한 확인 |
+| 회의실/자원 관리 | 예약 자원 등록, 수정, 사용 가능/중지 관리 |
+| 사용자 관리 | 사용자 목록 조회, 권한 변경, 활성/비활성 관리 |
+| 감사 이력 | 주요 관리자/운영 담당자 작업 이력 조회 |
 
 ## 7. 라우팅 구조
 
@@ -154,8 +173,16 @@ MVP 핵심 문장은 다음과 같다.
 /user/requests/:id
 /user/reservations
 /user/reservations/new
+/user/reservations/calendar
 /user/assets
+/user/asset-loans
 /user/me
+
+/manager/approvals
+/manager/approvals/:id
+
+/operator/requests
+/operator/requests/:id
 
 /admin
 /admin/dashboard
@@ -163,7 +190,11 @@ MVP 핵심 문장은 다음과 같다.
 /admin/requests/:id
 /admin/assets
 /admin/reservations
+/admin/reservations/calendar
+/admin/resources
 /admin/users
+/admin/users/:id
+/admin/audit-logs
 ```
 
 ## 8. 요청 유형
@@ -457,19 +488,39 @@ PATCH  /api/requests/{id}/status
 GET    /api/requests/{id}/histories
 ```
 
-### 13.3 관리자 요청 API
+### 13.3 팀장 승인 API
+
+```text
+GET    /api/manager/approvals
+GET    /api/manager/approvals/{id}
+PATCH  /api/manager/approvals/{id}/approve
+PATCH  /api/manager/approvals/{id}/reject
+```
+
+### 13.4 운영 담당자 API
+
+```text
+GET    /api/operator/requests
+GET    /api/operator/requests/{id}
+PATCH  /api/operator/requests/{id}/approve
+PATCH  /api/operator/requests/{id}/reject
+PATCH  /api/operator/requests/{id}/assignee
+PATCH  /api/operator/requests/{id}/due-date
+PATCH  /api/operator/requests/{id}/in-progress
+PATCH  /api/operator/requests/{id}/complete
+```
+
+### 13.5 관리자 요청 API
 
 ```text
 GET    /api/admin/requests
 GET    /api/admin/requests/{id}
-PATCH  /api/admin/requests/{id}/approve
-PATCH  /api/admin/requests/{id}/reject
 PATCH  /api/admin/requests/{id}/in-progress
 PATCH  /api/admin/requests/{id}/complete
 PATCH  /api/admin/requests/{id}/memo
 ```
 
-### 13.4 자산 API
+### 13.6 자산 API
 
 ```text
 GET    /api/assets
@@ -482,22 +533,25 @@ PATCH  /api/admin/asset-loans/{id}/return
 GET    /api/admin/asset-loans
 ```
 
-### 13.5 예약 API
+### 13.7 예약 API
 
 ```text
 GET    /api/resources
 POST   /api/admin/resources
 PATCH  /api/admin/resources/{id}
+PATCH  /api/admin/resources/{id}/status
 
 GET    /api/reservations
 POST   /api/reservations
 PATCH  /api/reservations/{id}/cancel
+GET    /api/reservations/calendar
 
 GET    /api/admin/reservations
 PATCH  /api/admin/reservations/{id}/cancel
+GET    /api/admin/reservations/calendar
 ```
 
-### 13.6 대시보드 API
+### 13.8 대시보드 API
 
 ```text
 GET    /api/admin/dashboard/summary
@@ -507,26 +561,35 @@ GET    /api/admin/dashboard/assets/status
 GET    /api/admin/dashboard/reservations/daily
 ```
 
+### 13.9 사용자/감사 이력 API
+
+```text
+GET    /api/admin/users
+GET    /api/admin/users/{id}
+PATCH  /api/admin/users/{id}/role
+PATCH  /api/admin/users/{id}/status
+GET    /api/admin/audit-logs
+```
+
 ## 14. 권한 설계
 
-| 기능 | 일반 직원 | 관리자 |
-| --- | --- | --- |
-| 회원가입/로그인 | 가능 | 가능 |
-| 내 정보 조회 | 가능 | 가능 |
-| 내 요청 등록 | 가능 | 가능 |
-| 내 요청 조회 | 가능 | 가능 |
-| 요청 수정/취소 | 본인 요청만 가능 | 가능 |
-| 전체 요청 조회 | 불가 | 가능 |
-| 승인/반려 | 불가 | 가능 |
-| 처리 중/완료 변경 | 불가 | 가능 |
-| 자산 조회 | 가능 | 가능 |
-| 자산 등록/수정 | 불가 | 가능 |
-| 자산 대여/반납 처리 | 불가 | 가능 |
-| 예약 등록 | 가능 | 가능 |
-| 내 예약 취소 | 가능 | 가능 |
-| 전체 예약 관리 | 불가 | 가능 |
-| 대시보드 통계 | 제한 | 가능 |
-| 사용자 목록 조회 | 불가 | 가능 |
+| 기능 | ROLE_USER | ROLE_MANAGER | ROLE_OPERATOR | ROLE_ADMIN |
+| --- | --- | --- | --- | --- |
+| 회원가입/로그인 | 가능 | 가능 | 가능 | 가능 |
+| 내 정보 조회 | 가능 | 가능 | 가능 | 가능 |
+| 내 요청 등록/조회 | 가능 | 가능 | 가능 | 가능 |
+| 요청 수정/취소 | 본인 요청 | 본인 요청 | 본인 요청 | 전체 |
+| 팀장 1차 승인/반려 | 불가 | 소속 팀 요청 | 불가 | 가능 |
+| 운영 최종 승인/반려 | 불가 | 불가 | 가능 | 가능 |
+| 담당자 지정/마감일 관리 | 불가 | 불가 | 가능 | 가능 |
+| 처리 중/완료 변경 | 불가 | 불가 | 담당 요청 | 가능 |
+| 자산 조회 | 가능 | 가능 | 가능 | 가능 |
+| 자산 등록/수정/대여/반납 | 불가 | 불가 | 가능 | 가능 |
+| 예약 등록/내 예약 취소 | 가능 | 가능 | 가능 | 가능 |
+| 전체 예약 관리 | 불가 | 불가 | 가능 | 가능 |
+| 회의실/자원 관리 | 불가 | 불가 | 불가 | 가능 |
+| 대시보드 통계 | 불가 | 불가 | 불가 | 가능 |
+| 사용자 관리/감사 이력 | 불가 | 불가 | 불가 | 가능 |
 
 백엔드에서 반드시 권한을 검증한다. 프론트엔드 라우팅 제한은 사용자 경험을 위한 보조 수단으로만 사용한다.
 
@@ -837,7 +900,7 @@ README에서는 아래 내용을 강조한다.
 
 ```text
 OfficeOps Hub는 사내 비품 요청, 회의실 예약, 자산 관리를 통합한 운영 관리 시스템입니다.
-단순 CRUD를 넘어 사용자/관리자 권한 분리, 요청 상태 전이, 예약 중복 방지,
+단순 CRUD를 넘어 일반 직원/팀장/운영 담당자/관리자 권한 분리, 요청 상태 전이, 예약 중복 방지,
 자산 상태 관리, 처리 이력 저장을 구현했습니다.
 
 백엔드는 Java 21과 Spring Boot 3를 사용했고, Spring Security와 JWT로 인증/인가를 처리했습니다.
