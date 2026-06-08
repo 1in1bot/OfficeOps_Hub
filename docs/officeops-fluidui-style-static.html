@@ -1,0 +1,1251 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OfficeOps Hub Fluid UI Style</title>
+    <style>
+      :root {
+        --bg: #eef2f7;
+        --chrome: #ffffff;
+        --chrome-2: #f8fafc;
+        --ink: #111827;
+        --muted: #64748b;
+        --line: #d8dee8;
+        --dark: #0f172a;
+        --blue: #2563eb;
+        --green: #16a34a;
+        --violet: #7c3aed;
+        --red: #dc2626;
+        --amber: #d97706;
+        --shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+        --radius: 8px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--ink);
+        font-family:
+          Inter,
+          Pretendard,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+      }
+
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+
+      .editor {
+        display: grid;
+        grid-template-columns: 280px 1fr 300px;
+        grid-template-rows: 58px 1fr 34px;
+        height: 100vh;
+      }
+
+      .topbar {
+        grid-column: 1 / -1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 0 16px;
+        border-bottom: 1px solid var(--line);
+        background: var(--chrome);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 260px;
+      }
+
+      .brand-mark {
+        display: grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        background: var(--dark);
+        color: #fff;
+        font-weight: 800;
+      }
+
+      .brand-title {
+        font-size: 15px;
+        font-weight: 800;
+      }
+
+      .brand-subtitle {
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .toolbar,
+      .modebar {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+
+      .tool-btn,
+      .mode-btn {
+        height: 34px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        color: #334155;
+        padding: 0 12px;
+        font-weight: 700;
+        cursor: default;
+      }
+
+      .mode-btn.active,
+      .tool-btn.primary {
+        border-color: var(--dark);
+        background: var(--dark);
+        color: #fff;
+      }
+
+      .sidebar,
+      .inspector {
+        overflow: auto;
+        border-right: 1px solid var(--line);
+        background: var(--chrome);
+      }
+
+      .inspector {
+        border-right: 0;
+        border-left: 1px solid var(--line);
+      }
+
+      .panel {
+        padding: 16px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .panel h2 {
+        margin: 0 0 12px;
+        font-size: 13px;
+        letter-spacing: 0;
+      }
+
+      .screen-list {
+        display: grid;
+        gap: 8px;
+      }
+
+      .screen-row {
+        display: grid;
+        grid-template-columns: 34px 1fr auto;
+        gap: 9px;
+        align-items: center;
+        padding: 9px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--chrome-2);
+        cursor: pointer;
+      }
+
+      .screen-row.active {
+        border-color: rgba(37, 99, 235, 0.45);
+        background: #eff6ff;
+      }
+
+      .screen-icon {
+        display: grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        color: #fff;
+        background: var(--dark);
+        font-weight: 800;
+        font-size: 12px;
+      }
+
+      .screen-row strong {
+        display: block;
+        font-size: 12px;
+      }
+
+      .screen-row span {
+        color: var(--muted);
+        font-size: 10px;
+      }
+
+      .badge {
+        border-radius: 999px;
+        padding: 4px 7px;
+        background: #e2e8f0;
+        color: #334155;
+        font-size: 10px;
+        font-weight: 800;
+      }
+
+      .widget-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+
+      .info-list {
+        display: grid;
+        gap: 8px;
+      }
+
+      .info-item {
+        padding: 9px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--chrome-2);
+      }
+
+      .info-item strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 12px;
+      }
+
+      .info-item span {
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.4;
+      }
+
+      .widget {
+        display: grid;
+        place-items: center;
+        min-height: 62px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--chrome-2);
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .canvas-shell {
+        position: relative;
+        overflow: auto;
+        background:
+          linear-gradient(#dde4ee 1px, transparent 1px),
+          linear-gradient(90deg, #dde4ee 1px, transparent 1px),
+          #f8fafc;
+        background-size: 28px 28px;
+      }
+
+      .canvas-top {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.86);
+        backdrop-filter: blur(10px);
+      }
+
+      .crumb {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .zoom {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .board {
+        position: relative;
+        width: 2600px;
+        height: 1700px;
+        transform-origin: top left;
+      }
+
+      .flow-svg {
+        position: absolute;
+        inset: 0;
+        width: 2600px;
+        height: 1700px;
+        overflow: visible;
+        pointer-events: none;
+      }
+
+      .phone-frame,
+      .web-frame {
+        position: absolute;
+        border: 1px solid #cbd5e1;
+        border-radius: 22px;
+        background: #fff;
+        box-shadow: var(--shadow);
+        cursor: pointer;
+        transition:
+          border-color 0.18s ease,
+          box-shadow 0.18s ease,
+          transform 0.18s ease;
+      }
+
+      .phone-frame:hover,
+      .web-frame:hover {
+        transform: translateY(-2px);
+      }
+
+      .phone-frame.active-screen,
+      .web-frame.active-screen {
+        border-color: var(--blue);
+        box-shadow:
+          0 0 0 5px rgba(37, 99, 235, 0.13),
+          var(--shadow);
+      }
+
+      .phone-frame {
+        width: 220px;
+        min-height: 390px;
+        padding: 18px 12px 14px;
+      }
+
+      .web-frame {
+        width: 270px;
+        min-height: 222px;
+        border-radius: 12px;
+        padding: 32px 12px 12px;
+      }
+
+      .frame-bar {
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        width: 58px;
+        height: 5px;
+        transform: translateX(-50%);
+        border-radius: 999px;
+        background: #cbd5e1;
+      }
+
+      .web-frame .frame-bar {
+        top: 12px;
+        left: 14px;
+        width: 76px;
+        transform: none;
+      }
+
+      .page-title {
+        margin: 0;
+        font-size: 14px;
+      }
+
+      .route {
+        margin: 3px 0 12px;
+        color: var(--muted);
+        font-size: 10px;
+      }
+
+      .screen-meta {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin: -4px 0 10px;
+      }
+
+      .mini-pill {
+        border-radius: 999px;
+        padding: 4px 7px;
+        background: #e2e8f0;
+        color: #334155;
+        font-size: 9px;
+        font-weight: 900;
+      }
+
+      .mini-pill.required {
+        color: #1d4ed8;
+        background: #dbeafe;
+      }
+
+      .mini-pill.recommended {
+        color: #047857;
+        background: #d1fae5;
+      }
+
+      .mini-pill.future {
+        color: #92400e;
+        background: #fef3c7;
+      }
+
+      .detail-list {
+        display: grid;
+        gap: 5px;
+        margin-top: 9px;
+      }
+
+      .detail-row {
+        display: flex;
+        gap: 6px;
+        align-items: flex-start;
+        color: var(--muted);
+        font-size: 10px;
+        line-height: 1.25;
+      }
+
+      .detail-row strong {
+        flex: 0 0 34px;
+        color: #334155;
+        font-size: 9px;
+      }
+
+      .chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-top: 8px;
+      }
+
+      .action-chip,
+      .api-chip,
+      .state-chip {
+        display: inline-flex;
+        align-items: center;
+        max-width: 100%;
+        border-radius: 999px;
+        padding: 4px 7px;
+        font-size: 9px;
+        font-weight: 900;
+        white-space: nowrap;
+      }
+
+      .action-chip {
+        color: #1e40af;
+        background: #dbeafe;
+      }
+
+      .api-chip {
+        color: #475569;
+        background: #e2e8f0;
+      }
+
+      .state-chip {
+        color: #6d28d9;
+        background: #ede9fe;
+      }
+
+      .test-chip {
+        color: #047857;
+        background: #d1fae5;
+      }
+
+      .mini-card-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+
+      .placeholder,
+      .line,
+      .button {
+        border-radius: 7px;
+        background: #e2e8f0;
+      }
+
+      .placeholder {
+        height: 36px;
+      }
+
+      .line {
+        height: 12px;
+        margin-bottom: 8px;
+      }
+
+      .line.short {
+        width: 62%;
+      }
+
+      .button {
+        width: 72px;
+        height: 28px;
+        margin-top: 10px;
+        background: var(--dark);
+      }
+
+      .button::after {
+        content: "Go";
+        display: grid;
+        place-items: center;
+        height: 100%;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 800;
+      }
+
+      .accent-blue {
+        border-color: rgba(37, 99, 235, 0.5);
+      }
+
+      .accent-green {
+        border-color: rgba(22, 163, 74, 0.5);
+      }
+
+      .accent-violet {
+        border-color: rgba(124, 58, 237, 0.5);
+      }
+
+      .accent-red {
+        border-color: rgba(220, 38, 38, 0.5);
+      }
+
+      .flow-line {
+        position: absolute;
+        height: 2px;
+        background: #94a3b8;
+      }
+
+      .flow-line::after {
+        content: "";
+        position: absolute;
+        top: -5px;
+        right: -2px;
+        width: 10px;
+        height: 10px;
+        border-top: 2px solid #94a3b8;
+        border-right: 2px solid #94a3b8;
+        transform: rotate(45deg);
+      }
+
+      .flow-label {
+        position: absolute;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #fff;
+        padding: 6px 10px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      .lane-label {
+        position: absolute;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.94);
+        padding: 8px 12px;
+        color: var(--ink);
+        font-size: 12px;
+        font-weight: 900;
+        box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+      }
+
+      .lane-label span {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      .property {
+        display: grid;
+        gap: 6px;
+        margin-bottom: 12px;
+      }
+
+      .property label {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      .property input,
+      .property select {
+        height: 34px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 0 10px;
+      }
+
+      .property textarea {
+        min-height: 76px;
+        resize: vertical;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 9px 10px;
+        color: #334155;
+      }
+
+      .color-row {
+        display: flex;
+        gap: 8px;
+      }
+
+      .color-dot {
+        width: 26px;
+        height: 26px;
+        border: 2px solid #fff;
+        border-radius: 999px;
+        box-shadow: 0 0 0 1px var(--line);
+      }
+
+      .statusbar {
+        grid-column: 1 / -1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 14px;
+        border-top: 1px solid var(--line);
+        background: var(--chrome);
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .toast {
+        position: fixed;
+        right: 320px;
+        bottom: 46px;
+        z-index: 30;
+        max-width: 340px;
+        padding: 11px 14px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(15, 23, 42, 0.92);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+        opacity: 0;
+        transform: translateY(12px);
+        transition:
+          opacity 0.2s ease,
+          transform 0.2s ease;
+        pointer-events: none;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 1100px) {
+        .editor {
+          grid-template-columns: 230px 1fr;
+        }
+
+        .inspector {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="editor">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">OH</div>
+          <div>
+            <div class="brand-title">OfficeOps Hub</div>
+            <div class="brand-subtitle">Fluid UI 스타일 화면 설계 보드</div>
+          </div>
+        </div>
+        <div class="modebar">
+          <button class="mode-btn active">Edit</button>
+          <button class="mode-btn">Flow</button>
+          <button class="mode-btn">Preview</button>
+        </div>
+        <div class="toolbar">
+          <button class="tool-btn">Grid On</button>
+          <button class="tool-btn">Snapping</button>
+          <button class="tool-btn">Share</button>
+          <button class="tool-btn primary">Present</button>
+        </div>
+      </header>
+
+      <aside class="sidebar">
+        <section class="panel">
+          <h2>Screens</h2>
+          <div class="screen-list" id="screenList"></div>
+        </section>
+
+        <section class="panel">
+          <h2>Project Charter</h2>
+          <div class="info-list">
+            <div class="info-item">
+              <strong>4주 MVP</strong>
+              <span>요청 승인 흐름, 예약 중복 방지, 자산 대여/반납을 우선 완성</span>
+            </div>
+            <div class="info-item">
+              <strong>6~8주 확장</strong>
+              <span>알림, 파일 첨부, CSV, 반복 예약, 이메일, AI 요청 요약 확장</span>
+            </div>
+            <div class="info-item">
+              <strong>팀 프로젝트 산출물</strong>
+              <span>Spring Boot API, React 앱, PostgreSQL ERD, Swagger, README, 발표자료</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Priority Rule</h2>
+          <div class="info-list">
+            <div class="info-item">
+              <strong>범위 충돌 시</strong>
+              <span>요청 승인 흐름, 예약 중복 방지, 자산 대여/반납을 우선한다.</span>
+            </div>
+            <div class="info-item">
+              <strong>문서 우선</strong>
+              <span>API/DB/상태권한 변경 전 관련 명세를 먼저 수정한다.</span>
+            </div>
+          </div>
+        </section>
+      </aside>
+
+      <main class="canvas-shell">
+        <div class="canvas-top">
+          <div class="crumb">OfficeOps Hub / MVP Flow / Screenflow</div>
+          <div class="zoom">
+            <button class="tool-btn">-</button>
+            <strong>86%</strong>
+            <button class="tool-btn">+</button>
+          </div>
+        </div>
+
+        <section class="board" id="board" aria-label="Fluid UI style full screenflow board">
+          <svg class="flow-svg" id="flowSvg" aria-hidden="true"></svg>
+          <div id="laneLayer"></div>
+          <div id="screenLayer"></div>
+        </section>
+      </main>
+
+      <aside class="inspector">
+        <section class="panel">
+          <h2>Properties</h2>
+          <div class="property">
+            <label>Selected screen</label>
+            <input id="propTitle" readonly />
+          </div>
+          <div class="property">
+            <label>Route</label>
+            <input id="propRoute" readonly />
+          </div>
+          <div class="property">
+            <label>Access / Priority</label>
+            <input id="propAccess" readonly />
+          </div>
+          <div class="property">
+            <label>Connected API</label>
+            <textarea id="propApi" readonly></textarea>
+          </div>
+          <div class="property">
+            <label>Main Actions</label>
+            <textarea id="propActions" readonly></textarea>
+          </div>
+          <div class="property">
+            <label>Status / Policy / Test</label>
+            <textarea id="propPolicy" readonly></textarea>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Document Coverage</h2>
+          <div class="property">
+            <label>Source docs</label>
+            <textarea readonly>01 요구사항: MVP/역할/업무 범위
+02 기능 명세: 기능 ID/우선순위
+03 화면 정의: 라우팅/권한/UI 액션
+04 ERD: 이력/감사/공통 코드
+05 API: 엔드포인트/권한
+06 상태권한: 상태 전이/접근 정책
+07 테스트: 필수 QA 시나리오
+09 Fluid UI: 화면흐름도 작성 기준
+Project Charter: 4주 MVP/확장/성과 기준
+Detailed Plan: 포트폴리오 관점/예약 제한/확장 기능</textarea>
+          </div>
+          <div class="property">
+            <label>System notes</label>
+            <textarea readonly>공통 코드는 code_groups/code_items seed 기준으로 select 옵션에 사용한다.
+요청/예약/자산/사용자 변경은 histories 또는 audit_logs에 저장한다.
+프론트에서 버튼을 숨겨도 백엔드 권한 검증이 필수다.
+예약은 30분 단위, 평일 09:00~18:00, 최소 30분/최대 4시간 기준이다.
+MVP 요청 유형은 ASSET_REQUEST, VISITOR_REQUEST, FACILITY_REQUEST다.</textarea>
+          </div>
+        </section>
+      </aside>
+
+      <footer class="statusbar">
+        <span id="flowStatus">Preview ready · 카드를 누르면 다음 화면으로 이동합니다.</span>
+        <span>30 screens · full screen spec · Grid 28px</span>
+      </footer>
+    </div>
+    <div class="toast" id="toast">다음 화면으로 이동했습니다.</div>
+    <script>
+      const screens = [
+        { id: "auth-login", no: "01", group: "Auth", title: "로그인", route: "/login", priority: "필수", x: 80, y: 120, type: "phone", next: "user-home" },
+        { id: "auth-signup", no: "02", group: "Auth", title: "회원가입", route: "/signup", priority: "필수", x: 80, y: 560, type: "phone", next: "auth-login" },
+        { id: "common-forbidden", no: "03", group: "Common", title: "권한 없음", route: "/forbidden", priority: "필수", x: 80, y: 1020, next: "auth-login" },
+        { id: "common-not-found", no: "04", group: "Common", title: "404 Not Found", route: "*", priority: "필수", x: 80, y: 1260, next: "auth-login" },
+
+        { id: "user-home", no: "05", group: "User", title: "사용자 홈", route: "/user", priority: "필수", x: 420, y: 120, next: "user-request-list" },
+        { id: "user-request-list", no: "06", group: "User", title: "내 요청 목록", route: "/user/requests", priority: "필수", x: 420, y: 360, next: "user-request-create" },
+        { id: "user-request-create", no: "07", group: "User", title: "요청 등록", route: "/user/requests/new", priority: "필수", x: 420, y: 600, next: "user-request-detail" },
+        { id: "user-request-detail", no: "08", group: "User", title: "요청 상세", route: "/user/requests/:id", priority: "필수", x: 420, y: 840, next: "manager-approval-list" },
+        { id: "user-reservation-list", no: "09", group: "User", title: "내 예약 목록", route: "/user/reservations", priority: "필수", x: 420, y: 1080, next: "user-reservation-create" },
+        { id: "user-reservation-create", no: "10", group: "User", title: "회의실 예약", route: "/user/reservations/new", priority: "필수", x: 420, y: 1320, next: "user-reservation-calendar" },
+        { id: "user-reservation-calendar", no: "11", group: "User", title: "예약 캘린더", route: "/user/reservations/calendar", priority: "권장", x: 740, y: 1320, next: "admin-reservation-list" },
+        { id: "user-asset-list", no: "12", group: "User", title: "자산 목록", route: "/user/assets", priority: "필수", x: 740, y: 1080, next: "user-asset-loan-list" },
+        { id: "user-asset-loan-list", no: "13", group: "User", title: "내 자산 대여 현황", route: "/user/asset-loans", priority: "권장", x: 1060, y: 1080, next: "admin-asset-list" },
+        { id: "user-me", no: "14", group: "User", title: "내 정보", route: "/user/me", priority: "필수", x: 740, y: 120, next: "user-password" },
+        { id: "user-password", no: "15", group: "User", title: "비밀번호 변경", route: "/user/me/password", priority: "MVP 이후", x: 1060, y: 120, next: "user-me" },
+        { id: "user-notification-list", no: "16", group: "User", title: "알림 목록", route: "/user/notifications", priority: "2순위", x: 740, y: 360, next: "user-request-detail" },
+
+        { id: "manager-approval-list", no: "17", group: "Manager", title: "팀 승인 요청함", route: "/manager/approvals", priority: "필수", x: 1060, y: 600, next: "manager-approval-detail" },
+        { id: "manager-approval-detail", no: "18", group: "Manager", title: "팀 승인 요청 상세", route: "/manager/approvals/:id", priority: "필수", x: 1380, y: 600, next: "operator-request-list" },
+
+        { id: "operator-request-list", no: "19", group: "Operator", title: "운영 요청함", route: "/operator/requests", priority: "필수", x: 1700, y: 360, next: "operator-request-detail" },
+        { id: "operator-request-detail", no: "20", group: "Operator", title: "운영 요청 상세", route: "/operator/requests/:id", priority: "필수", x: 1700, y: 600, next: "admin-request-list" },
+
+        { id: "admin-dashboard", no: "21", group: "Admin", title: "관리자 대시보드", route: "/admin/dashboard", priority: "필수", x: 2020, y: 120, next: "admin-request-list" },
+        { id: "admin-request-list", no: "22", group: "Admin", title: "전체 요청 관리", route: "/admin/requests", priority: "필수", x: 2020, y: 360, next: "admin-request-detail" },
+        { id: "admin-request-detail", no: "23", group: "Admin", title: "요청 상세 관리", route: "/admin/requests/:id", priority: "필수", x: 2020, y: 600, next: "admin-dashboard" },
+        { id: "admin-asset-list", no: "24", group: "Admin", title: "자산 관리", route: "/admin/assets", priority: "필수", x: 2020, y: 840, next: "admin-dashboard" },
+        { id: "admin-reservation-list", no: "25", group: "Admin", title: "예약 관리", route: "/admin/reservations", priority: "필수", x: 2020, y: 1080, next: "admin-reservation-calendar" },
+        { id: "admin-reservation-calendar", no: "26", group: "Admin", title: "관리자 예약 캘린더", route: "/admin/reservations/calendar", priority: "권장", x: 2340, y: 1080, next: "admin-reservation-list" },
+        { id: "admin-resource-list", no: "27", group: "Admin", title: "회의실/자원 관리", route: "/admin/resources", priority: "필수", x: 2020, y: 1320, next: "admin-dashboard" },
+        { id: "admin-user-list", no: "28", group: "Admin", title: "사용자 관리", route: "/admin/users", priority: "선택", x: 2340, y: 120, next: "admin-user-detail" },
+        { id: "admin-user-detail", no: "29", group: "Admin", title: "사용자 상세/권한 변경", route: "/admin/users/:id", priority: "권장", x: 2340, y: 360, next: "admin-audit-log-list" },
+        { id: "admin-audit-log-list", no: "30", group: "Admin", title: "감사 이력", route: "/admin/audit-logs", priority: "필수", x: 2340, y: 600, next: "admin-dashboard" },
+      ];
+
+      const accessByGroup = {
+        Auth: "비로그인",
+        Common: "전체",
+        User: "로그인 사용자",
+        Manager: "ROLE_MANAGER, ROLE_ADMIN",
+        Operator: "ROLE_OPERATOR, ROLE_ADMIN",
+        Admin: "ROLE_ADMIN / 일부 ROLE_OPERATOR",
+      };
+
+      const details = {
+        "auth-login": {
+          api: ["POST /auth/login"],
+          actions: ["로그인", "회원가입 이동", "권한별 홈 이동"],
+          policy: ["INACTIVE 로그인 차단", "Access Token 발급", "last_login_at 갱신 가능"],
+          test: ["AUTH-TC-003", "AUTH-TC-004", "AUTH-TC-005"],
+        },
+        "auth-signup": {
+          api: ["POST /auth/signup", "GET /codes/groups/DEPARTMENT/items"],
+          actions: ["회원가입", "로그인 이동", "부서 선택"],
+          policy: ["이메일 중복 불가", "기본 ROLE_USER", "ACTIVE 생성"],
+          test: ["AUTH-TC-001", "AUTH-TC-002"],
+        },
+        "common-forbidden": {
+          api: ["403 공통 에러"],
+          actions: ["이전 화면", "권한별 홈"],
+          policy: ["라우팅 보호", "백엔드 권한 재검증"],
+          test: ["PERM-TC-001", "PERM-TC-002", "FE-TC-002"],
+        },
+        "common-not-found": {
+          api: ["404 공통 에러"],
+          actions: ["홈으로", "로그인으로"],
+          policy: ["정의되지 않은 URL 처리"],
+          test: ["COMMON-001", "FE-TC-005"],
+        },
+        "user-home": {
+          api: ["GET /requests", "GET /reservations"],
+          actions: ["요청 요약", "최근 요청", "빠른 요청", "빠른 예약"],
+          policy: ["로그인 사용자 공통 홈", "권한별 메뉴 노출"],
+          test: ["FE-TC-001"],
+        },
+        "user-request-list": {
+          api: ["GET /requests"],
+          actions: ["검색", "필터", "페이지네이션", "상세 이동", "요청 등록"],
+          policy: ["본인 요청 조회", "상태/유형/우선순위/마감일 필터"],
+          test: ["REQ-TC-003"],
+        },
+        "user-request-create": {
+          api: ["POST /requests", "GET /codes/groups/{groupCode}/items"],
+          actions: ["요청 유형 선택", "유형별 추가 입력", "등록", "취소"],
+          policy: ["MVP: ASSET/VISITOR/FACILITY", "확장: PURCHASE/SUPPORT", "초기 PENDING_MANAGER_APPROVAL"],
+          test: ["REQ-TC-001", "REQ-TC-002", "FE-TC-006", "FE-TC-007"],
+        },
+        "user-request-detail": {
+          api: ["GET /requests/{id}", "PATCH /requests/{id}", "PATCH /requests/{id}/cancel", "GET /requests/{id}/histories"],
+          actions: ["상세 조회", "수정 모드", "취소", "승인/상태 이력 확인"],
+          policy: ["PENDING_MANAGER_APPROVAL만 수정", "최종 상태 수정 금지", "request_histories 저장"],
+          test: ["REQ-TC-004", "REQ-TC-005", "REQ-TC-006", "REQ-TC-007"],
+        },
+        "user-reservation-list": {
+          api: ["GET /reservations", "PATCH /reservations/{id}/cancel"],
+          actions: ["내 예약 조회", "예약 등록", "예약 취소"],
+          policy: ["예약자 본인 취소", "cancelled_by/cancelled_at 저장"],
+          test: ["RSV-TC-006", "RSV-TC-007", "RSV-TC-008"],
+        },
+        "user-reservation-create": {
+          api: ["GET /resources", "POST /reservations"],
+          actions: ["회의실 선택", "30분 단위 시간 선택", "목적 입력", "예약 등록"],
+          policy: ["평일 09:00~18:00", "최소 30분/최대 4시간", "중복 방지", "DISABLED 자원 제외"],
+          test: ["RSV-TC-001", "RSV-TC-002", "RSV-TC-004", "RSV-TC-005", "FE-TC-008"],
+        },
+        "user-reservation-calendar": {
+          api: ["GET /reservations/calendar"],
+          actions: ["월/주/일 보기", "회의실 필터", "내 예약 강조"],
+          policy: ["타인 상세 정보 제한", "예약 현황 조회"],
+          test: ["RSV-004"],
+        },
+        "user-asset-list": {
+          api: ["GET /assets"],
+          actions: ["자산 조회", "키워드/카테고리/상태 필터"],
+          policy: ["MAINTENANCE/RETIRED 대여 불가 표시"],
+          test: ["ASSET-001"],
+        },
+        "user-asset-loan-list": {
+          api: ["GET /asset-loans/me"],
+          actions: ["내 대여 현황", "반납 예정일 확인"],
+          policy: ["asset_loans 기반 조회"],
+          test: ["ASSET-006"],
+        },
+        "user-me": {
+          api: ["GET /users/me"],
+          actions: ["내 정보 조회", "비밀번호 변경 이동"],
+          policy: ["현재 로그인 사용자 정보"],
+          test: ["AUTH-004"],
+        },
+        "user-password": {
+          api: ["PATCH /users/me/password"],
+          actions: ["현재 비밀번호 입력", "새 비밀번호 확인"],
+          policy: ["MVP 이후", "BCrypt 저장"],
+          test: ["AUTH-005"],
+        },
+        "user-notification-list": {
+          api: ["GET /notifications", "PATCH /notifications/{id}/read"],
+          actions: ["알림 조회", "읽음 처리", "대상 리소스 이동"],
+          policy: ["target_type/target_id 저장", "2순위"],
+          test: ["NOTI-TC-001", "NOTI-TC-002", "NOTI-TC-003"],
+        },
+        "manager-approval-list": {
+          api: ["GET /manager/approvals"],
+          actions: ["소속 팀 요청 조회", "검색/필터", "상세 이동"],
+          policy: ["manager_id 기준 소속 팀만", "PENDING_MANAGER_APPROVAL 중심"],
+          test: ["PERM-TC-003", "APR-TC-001"],
+        },
+        "manager-approval-detail": {
+          api: ["GET /manager/approvals/{id}", "PATCH /manager/approvals/{id}/approve", "PATCH /manager/approvals/{id}/reject"],
+          actions: ["1차 승인", "1차 반려", "반려 사유 입력"],
+          policy: ["PENDING_MANAGER_APPROVAL -> PENDING_OPERATOR_APPROVAL/REJECTED", "request_approvals 저장"],
+          test: ["APR-TC-001", "APR-TC-002", "APR-TC-009"],
+        },
+        "operator-request-list": {
+          api: ["GET /operator/requests"],
+          actions: ["최종 승인 대기", "미배정/지연 필터", "상세 이동"],
+          policy: ["ROLE_OPERATOR/ADMIN", "담당 요청 처리"],
+          test: ["FE-TC-004"],
+        },
+        "operator-request-detail": {
+          api: ["PATCH /operator/requests/{id}/approve", "PATCH /operator/requests/{id}/reject", "PATCH /operator/requests/{id}/assignee", "PATCH /operator/requests/{id}/due-date", "PATCH /operator/requests/{id}/in-progress", "PATCH /operator/requests/{id}/complete"],
+          actions: ["최종 승인/반려", "담당자 지정", "마감일 변경", "처리 중", "완료"],
+          policy: ["PENDING_OPERATOR_APPROVAL -> APPROVED/REJECTED", "APPROVED -> IN_PROGRESS -> COMPLETED", "audit_logs 저장"],
+          test: ["APR-TC-004", "APR-TC-005", "APR-TC-006", "APR-TC-007", "AUDIT-TC-001"],
+        },
+        "admin-dashboard": {
+          api: ["GET /admin/dashboard/summary", "GET /admin/dashboard/requests/status", "GET /admin/dashboard/assets/status", "GET /admin/dashboard/reservations/daily"],
+          actions: ["운영 통계", "상태별 차트", "지연/미배정 요청", "최근 요청"],
+          policy: ["ROLE_ADMIN", "4주 MVP 필수", "DASH-001 필수, DASH-002 2순위"],
+          test: ["DASH-001", "DASH-002"],
+        },
+        "admin-request-list": {
+          api: ["GET /admin/requests"],
+          actions: ["전체 요청 조회", "상태/부서/담당자/마감일 필터", "상세 이동"],
+          policy: ["ROLE_OPERATOR/ADMIN", "전체 데이터 접근"],
+          test: ["ADMIN-REQ-001"],
+        },
+        "admin-request-detail": {
+          api: ["GET /requests/{id}", "PATCH /operator/requests/{id}/in-progress", "PATCH /operator/requests/{id}/complete"],
+          actions: ["최종 승인/반려", "메모 저장", "처리 중/완료", "이력 확인"],
+          policy: ["관리자는 전체 요청 관리", "잘못된 상태 변경 차단"],
+          test: ["APR-TC-008", "APR-TC-010"],
+        },
+        "admin-asset-list": {
+          api: ["GET /assets", "POST /admin/assets", "PATCH /admin/assets/{id}", "PATCH /admin/assets/{id}/status", "POST /admin/assets/{id}/loans", "PATCH /admin/asset-loans/{id}/return"],
+          actions: ["자산 등록/수정", "상태 변경", "대여 처리", "반납 처리"],
+          policy: ["AVAILABLE/IN_USE/MAINTENANCE/RETIRED", "processed_by 저장"],
+          test: ["ASSET-TC-001", "ASSET-TC-003", "ASSET-TC-004", "ASSET-TC-005", "ASSET-TC-007"],
+        },
+        "admin-reservation-list": {
+          api: ["GET /admin/reservations", "PATCH /admin/reservations/{id}/cancel"],
+          actions: ["전체 예약 조회", "관리자 취소", "예약자/회의실 필터"],
+          policy: ["ROLE_OPERATOR/ADMIN", "reservation_histories 저장"],
+          test: ["RSV-TC-007", "RSV-TC-008"],
+        },
+        "admin-reservation-calendar": {
+          api: ["GET /reservations/calendar"],
+          actions: ["전체 캘린더", "예약 상세 팝오버", "예약 취소"],
+          policy: ["관리자는 예약자 이름/부서 확인"],
+          test: ["RSV-004"],
+        },
+        "admin-resource-list": {
+          api: ["GET /resources", "POST /admin/resources", "PATCH /admin/resources/{id}", "PATCH /admin/resources/{id}/status"],
+          actions: ["자원 등록/수정", "사용 가능", "사용 중지"],
+          policy: ["AVAILABLE/DISABLED", "자원 상태 변경 audit_logs 저장"],
+          test: ["RSC-001", "RSC-002", "RSC-003", "RSC-004", "AUDIT-TC-005"],
+        },
+        "admin-user-list": {
+          api: ["GET /admin/users"],
+          actions: ["사용자 검색", "권한/상태/부서 필터", "상세 이동"],
+          policy: ["ROLE_ADMIN", "사용자 삭제 대신 INACTIVE"],
+          test: ["USER-001"],
+        },
+        "admin-user-detail": {
+          api: ["GET /admin/users/{id}", "PATCH /admin/users/{id}/role", "PATCH /admin/users/{id}/status"],
+          actions: ["권한 변경", "비활성화", "활성화"],
+          policy: ["사용자 상태 변경 audit_logs 저장", "권한 변경 이력 2순위"],
+          test: ["AUTH-TC-006", "AUDIT-TC-004", "AUDIT-003"],
+        },
+        "admin-audit-log-list": {
+          api: ["GET /admin/audit-logs"],
+          actions: ["작업자/유형/대상/기간 필터", "before/after JSON 확인"],
+          policy: ["ROLE_ADMIN", "IP/User-Agent 저장 가능", "비밀번호 제외"],
+          test: ["AUDIT-TC-006", "AUDIT-TC-007", "PERM-TC-005"],
+        },
+      };
+
+      const links = [
+        ["auth-login", "user-home"], ["auth-signup", "auth-login"],
+        ["user-home", "user-request-list"], ["user-request-list", "user-request-create"], ["user-request-create", "user-request-detail"],
+        ["user-request-detail", "manager-approval-list"], ["manager-approval-list", "manager-approval-detail"],
+        ["manager-approval-detail", "operator-request-list"], ["operator-request-list", "operator-request-detail"],
+        ["operator-request-detail", "admin-request-list"], ["admin-request-list", "admin-request-detail"], ["admin-request-detail", "admin-dashboard"],
+        ["user-home", "user-reservation-list"], ["user-reservation-list", "user-reservation-create"], ["user-reservation-create", "user-reservation-calendar"],
+        ["user-reservation-calendar", "admin-reservation-list"], ["admin-reservation-list", "admin-reservation-calendar"],
+        ["user-home", "user-asset-list"], ["user-asset-list", "user-asset-loan-list"], ["user-asset-loan-list", "admin-asset-list"],
+        ["admin-dashboard", "admin-asset-list"], ["admin-dashboard", "admin-reservation-list"], ["admin-dashboard", "admin-resource-list"],
+        ["admin-dashboard", "admin-user-list"], ["admin-user-list", "admin-user-detail"], ["admin-user-detail", "admin-audit-log-list"],
+        ["user-home", "user-me"], ["user-me", "user-password"], ["user-home", "user-notification-list"],
+        ["common-forbidden", "auth-login"], ["common-not-found", "auth-login"],
+      ];
+
+      const lanes = [
+        { title: "Auth / Common", hint: "진입/예외", x: 80, y: 62 },
+        { title: "User", hint: "직원 공통", x: 420, y: 62 },
+        { title: "Manager", hint: "1차 승인", x: 1060, y: 535 },
+        { title: "Operator", hint: "최종 승인/처리", x: 1700, y: 295 },
+        { title: "Admin", hint: "전체 운영 관리", x: 2020, y: 62 },
+      ];
+
+      const groupClass = {
+        Auth: "accent-blue",
+        Common: "accent-blue",
+        User: "accent-blue",
+        Manager: "accent-green",
+        Operator: "accent-violet",
+        Admin: "accent-red",
+      };
+
+      const groupBadge = {
+        Auth: "Auth",
+        Common: "Common",
+        User: "User",
+        Manager: "Mgr",
+        Operator: "Ops",
+        Admin: "Admin",
+      };
+
+      const screenMap = Object.fromEntries(screens.map((screen) => [screen.id, screen]));
+      const board = document.getElementById("board");
+      const screenLayer = document.getElementById("screenLayer");
+      const laneLayer = document.getElementById("laneLayer");
+      const flowSvg = document.getElementById("flowSvg");
+      const screenList = document.getElementById("screenList");
+      const canvasShell = document.querySelector(".canvas-shell");
+      const status = document.getElementById("flowStatus");
+      const toast = document.getElementById("toast");
+      let activeId = "auth-login";
+      let toastTimer;
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove("show"), 1300);
+      }
+
+      function priorityClass(priority) {
+        if (priority === "필수") return "required";
+        if (priority === "권장" || priority === "선택") return "recommended";
+        return "future";
+      }
+
+      function mockBody(screen) {
+        const detail = details[screen.id] || {};
+        const api = (detail.api || []).slice(0, 2).map((item) => `<span class="api-chip">${item}</span>`).join("");
+        const actions = (detail.actions || []).slice(0, 3).map((item) => `<span class="action-chip">${item}</span>`).join("");
+        const states = (detail.policy || []).slice(0, 2).map((item) => `<span class="state-chip">${item}</span>`).join("");
+        const tests = (detail.test || []).slice(0, 2).map((item) => `<span class="state-chip test-chip">${item}</span>`).join("");
+        const meta = `
+          <div class="detail-list">
+            <div class="detail-row"><strong>API</strong><span>${(detail.api || ["문서 기준 공통 처리"])[0]}</span></div>
+            <div class="detail-row"><strong>Action</strong><span>${(detail.actions || ["화면 이동"])[0]}</span></div>
+          </div>
+          <div class="chip-row">${api}${actions}${states}${tests}</div>
+        `;
+
+        if (screen.title.includes("대시보드") || screen.title.includes("홈") || screen.title.includes("캘린더")) {
+          return `<div class="mini-card-grid"><div class="placeholder"></div><div class="placeholder"></div><div class="placeholder"></div><div class="placeholder"></div></div>${meta}`;
+        }
+        if (screen.title.includes("목록") || screen.title.includes("요청함") || screen.title.includes("관리") || screen.title.includes("이력")) {
+          return `<div class="line"></div><div class="line"></div><div class="line short"></div>${meta}`;
+        }
+        return `<div class="line"></div><div class="line"></div><div class="line short"></div><div class="button"></div>${meta}`;
+      }
+
+      function renderScreens() {
+        screenLayer.innerHTML = "";
+        screenList.innerHTML = "";
+
+        screens.forEach((screen) => {
+          const frame = document.createElement("article");
+          frame.className = `${screen.type === "phone" ? "phone-frame" : "web-frame"} ${groupClass[screen.group]} ${screen.id === activeId ? "active-screen" : ""}`;
+          frame.dataset.screen = screen.id;
+          frame.dataset.next = screen.next || "";
+          frame.style.left = `${screen.x}px`;
+          frame.style.top = `${screen.y}px`;
+          frame.innerHTML = `
+            <span class="frame-bar"></span>
+            <h2 class="page-title">${screen.title}</h2>
+            <div class="route">${screen.route}</div>
+            <div class="screen-meta">
+              <span class="mini-pill">${screen.group}</span>
+              <span class="mini-pill ${priorityClass(screen.priority)}">${screen.priority}</span>
+            </div>
+            ${mockBody(screen)}
+          `;
+          screenLayer.appendChild(frame);
+
+          const row = document.createElement("div");
+          row.className = `screen-row ${screen.id === activeId ? "active" : ""}`;
+          row.dataset.target = screen.id;
+          row.innerHTML = `
+            <div class="screen-icon">${screen.no}</div>
+            <div><strong>${screen.title}</strong><span>${screen.route}</span></div>
+            <span class="badge">${groupBadge[screen.group]}</span>
+          `;
+          screenList.appendChild(row);
+        });
+      }
+
+      function renderLanes() {
+        laneLayer.innerHTML = "";
+        lanes.forEach((lane) => {
+          const label = document.createElement("div");
+          label.className = "lane-label";
+          label.style.left = `${lane.x}px`;
+          label.style.top = `${lane.y}px`;
+          label.innerHTML = `${lane.title}<span>${lane.hint}</span>`;
+          laneLayer.appendChild(label);
+        });
+      }
+
+      function renderLinks() {
+        flowSvg.innerHTML = `
+          <defs>
+            <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L9,3 z" fill="#94a3b8"></path>
+            </marker>
+          </defs>
+        `;
+
+        links.forEach(([fromId, toId]) => {
+          const from = screenMap[fromId];
+          const to = screenMap[toId];
+          if (!from || !to) return;
+          const fromWidth = from.type === "phone" ? 220 : 270;
+          const fromHeight = from.type === "phone" ? 390 : 196;
+          const toHeight = to.type === "phone" ? 390 : 196;
+          const x1 = from.x + fromWidth;
+          const y1 = from.y + fromHeight / 2;
+          const x2 = to.x;
+          const y2 = to.y + toHeight / 2;
+          const gap = Math.max(80, Math.abs(x2 - x1) * 0.45);
+          const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          path.setAttribute("d", `M ${x1} ${y1} C ${x1 + gap} ${y1}, ${x2 - gap} ${y2}, ${x2} ${y2}`);
+          path.setAttribute("fill", "none");
+          path.setAttribute("stroke", fromId === activeId ? "#2563eb" : "#94a3b8");
+          path.setAttribute("stroke-width", fromId === activeId ? "3" : "2");
+          path.setAttribute("marker-end", "url(#arrow)");
+          flowSvg.appendChild(path);
+        });
+      }
+
+      function selectScreen(id, shouldScroll = true) {
+        const screen = screenMap[id];
+        const target = document.querySelector(`[data-screen="${id}"]`);
+        if (!screen || !target) return;
+        const detail = details[id] || {};
+        activeId = id;
+
+        document.querySelectorAll("[data-screen]").forEach((item) => item.classList.toggle("active-screen", item.dataset.screen === id));
+        document.querySelectorAll(".screen-row").forEach((row) => row.classList.toggle("active", row.dataset.target === id));
+        status.textContent = `현재 화면: ${screen.title} · ${screen.route} · ${screen.priority}`;
+        document.getElementById("propTitle").value = screen.title;
+        document.getElementById("propRoute").value = screen.route;
+        document.getElementById("propAccess").value = `${accessByGroup[screen.group] || "-"} · ${screen.priority}`;
+        document.getElementById("propApi").value = (detail.api || []).join("\n");
+        document.getElementById("propActions").value = (detail.actions || []).join("\n");
+        document.getElementById("propPolicy").value = [
+          ...(detail.policy || []),
+          ...(detail.test || []).map((item) => `테스트: ${item}`),
+        ].join("\n");
+        renderLinks();
+
+        if (shouldScroll) {
+          canvasShell.scrollTo({
+            left: Math.max(0, screen.x - 90),
+            top: Math.max(0, screen.y - 90),
+            behavior: "smooth",
+          });
+        }
+      }
+
+      board.addEventListener("click", (event) => {
+        const frame = event.target.closest("[data-screen]");
+        if (!frame) return;
+        const current = screenMap[frame.dataset.screen];
+        const next = frame.dataset.next || frame.dataset.screen;
+        selectScreen(next);
+        showToast(`${current.title} → ${screenMap[next]?.title || "다음 화면"}`);
+      });
+
+      screenList.addEventListener("click", (event) => {
+        const row = event.target.closest(".screen-row");
+        if (!row) return;
+        selectScreen(row.dataset.target);
+        showToast(`${screenMap[row.dataset.target].title} 화면으로 이동`);
+      });
+
+      document.querySelectorAll(".mode-btn").forEach((button) => {
+        button.addEventListener("click", () => {
+          document.querySelectorAll(".mode-btn").forEach((item) => item.classList.toggle("active", item === button));
+          showToast(`${button.textContent.trim()} mode`);
+        });
+      });
+
+      renderLanes();
+      renderScreens();
+      renderLinks();
+      selectScreen(activeId, false);
+    </script>
+  </body>
+</html>
