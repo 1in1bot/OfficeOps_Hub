@@ -43,6 +43,12 @@
 - 감사 이력 저장
 - 예약 중복 방지
 - 자산 대여/반납
+- 내 연차 현황과 연차 사용 내역 조회
+- 출근/퇴근 기록과 중복 기록 차단
+- 연차/근무제 전자결재 상신
+- 팀장 전자결재 승인/반려
+- HR 연차/증명서 처리
+- 재무 지출결의서/법인카드 사용내역 처리
 
 ### 4.2 2순위 테스트
 
@@ -163,6 +169,36 @@
 | CODE-TC-002 | 존재하지 않는 코드 그룹 조회 | 404 또는 빈 목록 정책에 맞게 응답 |
 | CODE-TC-003 | 비활성 코드 항목 | 사용자 입력 옵션에서 제외 |
 
+### 5.10 근태/연차
+
+| ID | 케이스 | 기대 결과 |
+| --- | --- | --- |
+| ATT-TC-001 | 내 연차 현황 조회 | granted/used/pending/remaining 반환 |
+| ATT-TC-002 | 잔여 연차보다 큰 연차 신청 | LEAVE_BALANCE_NOT_ENOUGH |
+| ATT-TC-003 | 연차 최종 승인 | leave_usages 생성, leave_balances 차감 |
+| ATT-TC-004 | 연차 취소 최종 승인 | 원본 사용 이력 취소, leave_balances 복원 |
+| ATT-TC-005 | 출근 기록 | CHECKED_IN 저장 |
+| ATT-TC-006 | 중복 출근 | ATTENDANCE_INVALID_STATUS |
+| ATT-TC-007 | 퇴근 기록 | CHECKED_OUT, work_minutes 계산 |
+| ATT-TC-008 | 팀장 팀 근태 조회 | 소속 팀원만 조회 |
+| ATT-TC-009 | HR 근태 리포트 조회 | 부서/월별 집계 반환 |
+
+### 5.11 전자결재/증명서/비용
+
+| ID | 케이스 | 기대 결과 |
+| --- | --- | --- |
+| EAPP-TC-001 | 전자결재 임시저장 | DRAFT 생성 |
+| EAPP-TC-002 | 전자결재 상신 | PENDING_MANAGER_APPROVAL, approval_steps 생성 |
+| EAPP-TC-003 | 팀장 결재 승인 | PENDING_FINAL_APPROVAL |
+| EAPP-TC-004 | 팀장 타 팀 결재 승인 | 403 |
+| EAPP-TC-005 | 반려 사유 없이 반려 | Validation 에러 |
+| EAPP-TC-006 | HR 문서 최종 승인 | APPROVED 또는 COMPLETED |
+| EAPP-TC-007 | 재무 문서 최종 승인 | 비용 처리 대상 생성 또는 처리 완료 |
+| EAPP-TC-008 | 재직증명서 완료 처리 | certificate_requests.processed_at 저장 |
+| EAPP-TC-009 | 지출결의서 처리 | expense_reports.processed_at 저장 |
+| EAPP-TC-010 | 결재 상태 변경 | approval_histories 저장 |
+| EAPP-TC-011 | 결재 알림 생성 | targetType=APPROVAL_DOCUMENT 저장 |
+
 ## 6. 프론트엔드 테스트 케이스
 
 | ID | 케이스 | 기대 결과 |
@@ -214,6 +250,33 @@
 4. 사용자 내 자산 대여 현황 확인
 5. 자산 반납 처리
 6. 자산 상태 AVAILABLE 확인
+
+### 7.4 근태/연차 흐름
+
+```text
+1. 사용자가 내 근태 홈에 접근한다.
+2. 출근 버튼을 눌러 CHECKED_IN 상태를 만든다.
+3. 중복 출근을 시도하고 ATTENDANCE_INVALID_STATUS를 확인한다.
+4. 퇴근 버튼을 눌러 CHECKED_OUT 상태와 근무시간 계산을 확인한다.
+5. 내 연차 현황에서 잔여 연차를 확인한다.
+6. 연차 신청서를 작성해 전자결재로 상신한다.
+7. 팀장이 1차 승인한다.
+8. HR 담당자가 최종 승인한다.
+9. leave_usages가 생성되고 leave_balances.used_days/remaining_days가 변경되는지 확인한다.
+10. 연차 취소 신청 승인 시 잔여 연차가 복원되는지 확인한다.
+```
+
+### 7.5 전자결재/증명서/비용 흐름
+
+```text
+1. 사용자가 전자결재 문서 작성 화면에서 문서 유형을 선택한다.
+2. 지출결의서를 임시저장한 뒤 수정한다.
+3. 지출결의서를 상신하고 팀장 1차 승인을 진행한다.
+4. 재무 담당자가 최종 승인하고 처리 코멘트를 저장한다.
+5. 사용자가 재직증명서 신청서를 상신한다.
+6. HR 담당자가 증명서 발급 완료 처리한다.
+7. 결재 이력, 알림, 감사 이력이 저장되는지 확인한다.
+```
 ```
 
 ## 8. 테스트 실행 기준

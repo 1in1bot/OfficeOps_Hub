@@ -38,6 +38,15 @@
 | notifications | 인앱 알림 |
 | audit_logs | 관리자 작업 감사 이력 |
 | attachments | 요청 첨부파일, MVP 이후 |
+| attendance_records | 출퇴근/근무시간 기록 |
+| leave_balances | 사용자별 연차 잔여 현황 |
+| leave_usages | 연차 사용/복원/조정 이력 |
+| approval_documents | 전자결재 문서 본문 |
+| approval_steps | 전자결재 결재선 단계 |
+| approval_histories | 전자결재 승인/반려/상태 변경 이력 |
+| expense_reports | 지출결의서 상세 |
+| corporate_card_usages | 법인카드 사용내역서 상세 |
+| certificate_requests | 재직/경력증명서 신청 상세 |
 
 ## 4. ERD
 
@@ -60,6 +69,12 @@ erDiagram
     USERS ||--o{ NOTIFICATIONS : receives
     USERS ||--o{ AUDIT_LOGS : performs
     USERS ||--o{ ATTACHMENTS : uploads
+    USERS ||--o{ ATTENDANCE_RECORDS : records
+    USERS ||--o{ LEAVE_BALANCES : owns
+    USERS ||--o{ LEAVE_USAGES : uses
+    USERS ||--o{ APPROVAL_DOCUMENTS : drafts
+    USERS ||--o{ APPROVAL_STEPS : approves
+    USERS ||--o{ APPROVAL_HISTORIES : acts
 
     REQUESTS ||--|| REQUEST_DETAILS : has
     REQUESTS ||--o{ REQUEST_APPROVALS : has
@@ -72,6 +87,12 @@ erDiagram
     ASSETS ||--o{ ASSET_HISTORIES : has
     RESOURCES ||--o{ RESERVATIONS : has
     RESERVATIONS ||--o{ RESERVATION_HISTORIES : has
+    APPROVAL_DOCUMENTS ||--o{ APPROVAL_STEPS : has
+    APPROVAL_DOCUMENTS ||--o{ APPROVAL_HISTORIES : has
+    APPROVAL_DOCUMENTS ||--o| EXPENSE_REPORTS : details
+    APPROVAL_DOCUMENTS ||--o| CORPORATE_CARD_USAGES : details
+    APPROVAL_DOCUMENTS ||--o| CERTIFICATE_REQUESTS : details
+    APPROVAL_DOCUMENTS ||--o{ LEAVE_USAGES : creates
 ```
 
 ## 5. 테이블 상세
@@ -101,7 +122,7 @@ erDiagram
 | email | varchar(255) | not null, unique | 이메일 |
 | password | varchar(255) | not null | BCrypt 암호화 비밀번호 |
 | name | varchar(100) | not null | 이름 |
-| role | varchar(30) | not null | ROLE_USER, ROLE_MANAGER, ROLE_OPERATOR, ROLE_ADMIN |
+| role | varchar(30) | not null | ROLE_USER, ROLE_MANAGER, ROLE_OPERATOR, ROLE_HR, ROLE_FINANCE, ROLE_ADMIN |
 | status | varchar(20) | not null | ACTIVE, INACTIVE |
 | created_at | timestamp | not null | 가입일 |
 | updated_at | timestamp | not null | 수정일 |
@@ -440,6 +461,181 @@ status = 'RESERVED'
 | content_type | varchar(100) | nullable | MIME 타입 |
 | created_at | timestamp | not null | 업로드일 |
 
+### 5.19 attendance_records
+
+출퇴근, 휴게, 근무시간 기록 테이블이다.
+
+| 컬럼 | 타입 | 제약 | 설명 |
+| --- | --- | --- | --- |
+| id | bigint | PK | 근태 기록 ID |
+| user_id | bigint | FK, not null | 사용자 |
+| work_date | date | not null | 근무일 |
+| check_in_at | timestamp | nullable | 출근 시각 |
+| check_out_at | timestamp | nullable | 퇴근 시각 |
+| break_minutes | int | not null, default 0 | 휴게 시간 |
+| work_minutes | int | not null, default 0 | 총 근무 시간 |
+| overtime_minutes | int | not null, default 0 | 초과근무 시간 |
+| work_type | varchar(50) | not null | OFFICE, REMOTE, OUT_OF_OFFICE, BUSINESS_TRIP |
+| status | varchar(30) | not null | NOT_CHECKED_IN, CHECKED_IN, ON_BREAK, CHECKED_OUT, CORRECTED |
+| correction_reason | text | nullable | HR 보정 사유 |
+| created_at | timestamp | not null | 생성일 |
+| updated_at | timestamp | not null | 수정일 |
+
+제약:
+
+- `(user_id, work_date)` unique
+
+### 5.20 leave_balances
+
+사용자별 연차 잔여 현황 테이블이다.
+
+| 컬럼 | 타입 | 제약 | 설명 |
+| --- | --- | --- | --- |
+| id | bigint | PK | 연차 현황 ID |
+| user_id | bigint | FK, not null | 사용자 |
+| year | int | not null | 기준 연도 |
+| granted_days | numeric(5,2) | not null | 발생 연차 |
+| used_days | numeric(5,2) | not null | 사용 연차 |
+| pending_days | numeric(5,2) | not null | 승인 대기 또는 예정 차감 |
+| remaining_days | numeric(5,2) | not null | 잔여 연차 |
+| expired_days | numeric(5,2) | not null, default 0 | 만료 연차 |
+| updated_by | bigint | FK, nullable | 조정자 |
+| created_at | timestamp | not null | 생성일 |
+| updated_at | timestamp | not null | 수정일 |
+
+제약:
+
+- `(user_id, year)` unique
+
+### 5.21 leave_usages
+
+연차 발생, 사용, 취소 복원, 조정 이력을 저장한다.
+
+| 컬럼 | 타입 | 제약 | 설명 |
+| --- | --- | --- | --- |
+| id | bigint | PK | 연차 이력 ID |
+| user_id | bigint | FK, not null | 사용자 |
+| approval_document_id | bigint | FK, nullable | 관련 전자결재 문서 |
+| balance_id | bigint | FK, nullable | 연차 현황 |
+| usage_type | varchar(30) | not null | GRANT, USE, CANCEL_RESTORE, ADJUST, EXPIRE |
+| amount_days | numeric(5,2) | not null | 변동 일수 |
+| start_at | timestamp | nullable | 사용 시작 |
+| end_at | timestamp | nullable | 사용 종료 |
+| reason | text | nullable | 사유 |
+| created_by | bigint | FK, nullable | 등록자 |
+| created_at | timestamp | not null | 생성일 |
+
+### 5.22 approval_documents
+
+전자결재 문서 공통 본문 테이블이다.
+
+| 컬럼 | 타입 | 제약 | 설명 |
+| --- | --- | --- | --- |
+| id | bigint | PK | 결재 문서 ID |
+| drafter_id | bigint | FK, not null | 작성자 |
+| department_id | bigint | FK, nullable | 작성자 부서 |
+| document_type | varchar(60) | not null | 문서 유형 |
+| title | varchar(200) | not null | 제목 |
+| content | text | nullable | 본문 |
+| detail_payload | jsonb | nullable | 문서 유형별 입력값 |
+| status | varchar(40) | not null | DRAFT, PENDING_MANAGER_APPROVAL 등 |
+| current_step_order | int | nullable | 현재 결재 단계 |
+| submitted_at | timestamp | nullable | 상신 시각 |
+| completed_at | timestamp | nullable | 완료 시각 |
+| cancelled_at | timestamp | nullable | 취소 시각 |
+| created_at | timestamp | not null | 생성일 |
+| updated_at | timestamp | not null | 수정일 |
+
+### 5.23 approval_steps
+
+전자결재 결재선 단계 테이블이다.
+
+| 컬럼 | 타입 | 제약 | 설명 |
+| --- | --- | --- | --- |
+| id | bigint | PK | 결재 단계 ID |
+| approval_document_id | bigint | FK, not null | 결재 문서 |
+| step_order | int | not null | 단계 순서 |
+| step_type | varchar(50) | not null | MANAGER_APPROVAL, HR_APPROVAL, FINANCE_APPROVAL, ADMIN_APPROVAL |
+| expected_approver_id | bigint | FK, nullable | 예정 결재자 |
+| approver_role | varchar(30) | nullable | 예정 결재 역할 |
+| status | varchar(30) | not null | WAITING, APPROVED, REJECTED, SKIPPED |
+| acted_at | timestamp | nullable | 처리 시각 |
+| comment | text | nullable | 코멘트 |
+| created_at | timestamp | not null | 생성일 |
+| updated_at | timestamp | not null | 수정일 |
+
+제약:
+
+- `(approval_document_id, step_order)` unique
+
+### 5.24 approval_histories
+
+전자결재 승인/반려/상태 변경 이력 테이블이다.
+
+| 컬럼 | 타입 | 제약 | 설명 |
+| --- | --- | --- | --- |
+| id | bigint | PK | 이력 ID |
+| approval_document_id | bigint | FK, not null | 결재 문서 |
+| step_id | bigint | FK, nullable | 결재 단계 |
+| actor_id | bigint | FK, nullable | 처리자 |
+| action_type | varchar(50) | not null | DRAFTED, SUBMITTED, APPROVED, REJECTED, CANCELLED, COMPLETED |
+| from_status | varchar(40) | nullable | 이전 상태 |
+| to_status | varchar(40) | nullable | 변경 상태 |
+| comment | text | nullable | 처리 코멘트 |
+| created_at | timestamp | not null | 생성일 |
+
+### 5.25 expense_reports
+
+지출결의서 상세 테이블이다.
+
+| 컬럼 | 타입 | 제약 | 설명 |
+| --- | --- | --- | --- |
+| id | bigint | PK | 지출결의서 ID |
+| approval_document_id | bigint | FK, not null, unique | 결재 문서 |
+| expense_date | date | not null | 사용일 |
+| amount | numeric(12,2) | not null | 금액 |
+| currency | varchar(10) | not null | 통화 |
+| vendor | varchar(150) | nullable | 거래처 |
+| expense_category | varchar(50) | not null | 비용 항목 |
+| purpose | text | not null | 사용 목적 |
+| processed_by | bigint | FK, nullable | 재무 처리자 |
+| processed_at | timestamp | nullable | 처리 시각 |
+
+### 5.26 corporate_card_usages
+
+법인카드 사용내역서 상세 테이블이다.
+
+| 컬럼 | 타입 | 제약 | 설명 |
+| --- | --- | --- | --- |
+| id | bigint | PK | 법인카드 사용내역 ID |
+| approval_document_id | bigint | FK, not null, unique | 결재 문서 |
+| card_name | varchar(100) | nullable | 카드명 |
+| masked_card_number | varchar(30) | nullable | 마스킹 카드번호 |
+| used_at | timestamp | not null | 사용 일시 |
+| amount | numeric(12,2) | not null | 금액 |
+| merchant_name | varchar(150) | not null | 가맹점 |
+| category | varchar(50) | nullable | 비용 항목 |
+| purpose | text | not null | 사용 목적 |
+| processed_by | bigint | FK, nullable | 재무 처리자 |
+| processed_at | timestamp | nullable | 처리 시각 |
+
+### 5.27 certificate_requests
+
+재직증명서/경력증명서 신청 상세 테이블이다.
+
+| 컬럼 | 타입 | 제약 | 설명 |
+| --- | --- | --- | --- |
+| id | bigint | PK | 증명서 신청 ID |
+| approval_document_id | bigint | FK, not null, unique | 결재 문서 |
+| certificate_type | varchar(50) | not null | EMPLOYMENT, CAREER |
+| purpose | varchar(200) | not null | 용도 |
+| submit_to | varchar(200) | nullable | 제출처 |
+| language | varchar(20) | not null | KO, EN |
+| copies | int | not null | 발급 부수 |
+| receive_method | varchar(30) | not null | DOWNLOAD, EMAIL, PRINT |
+| processed_by | bigint | FK, nullable | HR 처리자 |
+| processed_at | timestamp | nullable | 처리 시각 |
+
 ## 6. 마스터 데이터
 
 MVP에서는 enum 또는 seed 데이터로 관리한다.
@@ -451,6 +647,8 @@ MVP에서는 enum 또는 seed 데이터로 관리한다.
 | ROLE_USER | 일반 직원 |
 | ROLE_MANAGER | 팀장 |
 | ROLE_OPERATOR | 운영 담당자 |
+| ROLE_HR | HR 담당자 |
+| ROLE_FINANCE | 재무 담당자 |
 | ROLE_ADMIN | 관리자 |
 
 ### 6.2 사용자 상태
@@ -482,6 +680,12 @@ MVP에서는 enum 또는 seed 데이터로 관리한다.
 | 자원 상태 | AVAILABLE, DISABLED |
 | 예약 상태 | RESERVED, CANCELLED, COMPLETED |
 | 댓글 공개 범위 | PUBLIC, INTERNAL |
+| 전자결재 문서 유형 | LEAVE_REQUEST, LEAVE_CANCEL_REQUEST, REMOTE_WORK_REQUEST, OUT_OF_OFFICE_REQUEST, BUSINESS_TRIP_REQUEST, STAGGERED_WORK_REQUEST, OVERTIME_REQUEST, EXPENSE_REPORT, CORPORATE_CARD_REPORT, EMPLOYMENT_CERTIFICATE, CAREER_CERTIFICATE |
+| 전자결재 상태 | DRAFT, SUBMITTED, PENDING_MANAGER_APPROVAL, PENDING_FINAL_APPROVAL, APPROVED, REJECTED, COMPLETED, CANCEL_REQUESTED, CANCELLED |
+| 결재 단계 유형 | MANAGER_APPROVAL, HR_APPROVAL, FINANCE_APPROVAL, ADMIN_APPROVAL |
+| 근태 상태 | NOT_CHECKED_IN, CHECKED_IN, ON_BREAK, CHECKED_OUT, CORRECTED |
+| 근무 유형 | OFFICE, REMOTE, OUT_OF_OFFICE, BUSINESS_TRIP |
+| 연차 이력 유형 | GRANT, USE, CANCEL_RESTORE, ADJUST, EXPIRE |
 
 ## 7. Flyway 마이그레이션 권장 순서
 
@@ -492,5 +696,8 @@ V3__create_request_approvals_histories_comments.sql
 V4__create_assets_and_loans.sql
 V5__create_resources_reservations_and_histories.sql
 V6__create_notifications_audit_logs_attachments.sql
-V7__insert_seed_master_data.sql
+V7__create_attendance_and_leave.sql
+V8__create_approval_documents.sql
+V9__create_expense_certificate_details.sql
+V10__insert_seed_master_data.sql
 ```

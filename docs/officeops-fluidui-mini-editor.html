@@ -312,6 +312,16 @@
         background: #ede9fe;
       }
 
+      .pill.hr {
+        color: #0f766e;
+        background: #ccfbf1;
+      }
+
+      .pill.finance {
+        color: #b45309;
+        background: #fef3c7;
+      }
+
       .pill.admin {
         color: var(--red);
         background: #fee2e2;
@@ -438,6 +448,18 @@
               <span class="icon">AST</span>
               <span><strong>자산 화면</strong><span>자산 관리 카드 추가</span></span>
             </button>
+            <button class="add-btn" data-add="approval">
+              <span class="icon">APR</span>
+              <span><strong>전자결재 화면</strong><span>결재 문서 카드 추가</span></span>
+            </button>
+            <button class="add-btn" data-add="attendance">
+              <span class="icon">ATT</span>
+              <span><strong>근태 화면</strong><span>연차/출퇴근 카드 추가</span></span>
+            </button>
+            <button class="add-btn" data-add="finance">
+              <span class="icon">FIN</span>
+              <span><strong>재무 화면</strong><span>비용 처리 카드 추가</span></span>
+            </button>
           </div>
         </section>
 
@@ -459,6 +481,9 @@
             <button class="btn" data-flow="request">요청 승인</button>
             <button class="btn" data-flow="reservation">회의실 예약</button>
             <button class="btn" data-flow="asset">자산 관리</button>
+            <button class="btn" data-flow="attendance">근태</button>
+            <button class="btn" data-flow="approval">전자결재</button>
+            <button class="btn" data-flow="finance">재무</button>
             <button class="btn" data-flow="admin">관리자</button>
           </div>
           <div class="toolbar">
@@ -490,6 +515,8 @@
               <option value="user">USER</option>
               <option value="manager">MANAGER</option>
               <option value="operator">OPERATOR</option>
+              <option value="hr">HR</option>
+              <option value="finance">FINANCE</option>
               <option value="admin">ADMIN</option>
             </select>
           </div>
@@ -499,6 +526,9 @@
               <option value="request">요청 승인</option>
               <option value="reservation">회의실 예약</option>
               <option value="asset">자산 관리</option>
+              <option value="attendance">근태</option>
+              <option value="approval">전자결재</option>
+              <option value="finance">재무</option>
               <option value="admin">관리자</option>
             </select>
           </div>
@@ -536,6 +566,11 @@
         { id: "operatorDetail", title: "운영 요청 상세", route: "/operator/requests/:id", role: "operator", flow: "request", x: 1020, y: 110, type: "web" },
         { id: "reservation", title: "회의실 예약", route: "/user/reservations/new", role: "user", flow: "reservation", x: 80, y: 690, type: "web" },
         { id: "assetAdmin", title: "자산 관리", route: "/admin/assets", role: "admin", flow: "asset", x: 690, y: 690, type: "web" },
+        { id: "attendanceHome", title: "내 근태 홈", route: "/user/attendance", role: "user", flow: "attendance", x: 360, y: 690, type: "web" },
+        { id: "approvalCreate", title: "전자결재 작성", route: "/user/approvals/new", role: "user", flow: "approval", x: 360, y: 950, type: "web" },
+        { id: "managerEApproval", title: "팀 전자결재 상세", route: "/manager/e-approvals/:id", role: "manager", flow: "approval", x: 690, y: 950, type: "web" },
+        { id: "hrApprovals", title: "HR 전자결재함", route: "/hr/e-approvals", role: "hr", flow: "approval", x: 1020, y: 950, type: "web" },
+        { id: "financeApprovals", title: "재무 전자결재함", route: "/finance/e-approvals", role: "finance", flow: "finance", x: 1350, y: 950, type: "web" },
         { id: "adminDashboard", title: "관리자 대시보드", route: "/admin/dashboard", role: "admin", flow: "admin", x: 1020, y: 410, type: "web" },
       ];
 
@@ -546,6 +581,12 @@
         ["managerApproval", "operatorDetail"],
         ["operatorDetail", "adminDashboard"],
         ["reservation", "assetAdmin"],
+        ["userHome", "attendanceHome"],
+        ["attendanceHome", "approvalCreate"],
+        ["approvalCreate", "managerEApproval"],
+        ["managerEApproval", "hrApprovals"],
+        ["managerEApproval", "financeApprovals"],
+        ["financeApprovals", "adminDashboard"],
       ];
 
       let nodes = structuredClone(initialNodes);
@@ -570,11 +611,11 @@
       };
 
       function roleLabel(role) {
-        return { auth: "AUTH", user: "USER", manager: "MANAGER", operator: "OPS", admin: "ADMIN" }[role] || role;
+        return { auth: "AUTH", user: "USER", manager: "MANAGER", operator: "OPS", hr: "HR", finance: "FIN", admin: "ADMIN" }[role] || role;
       }
 
       function roleName(role) {
-        return { auth: "인증", user: "사용자", manager: "팀장", operator: "운영", admin: "관리자" }[role] || role;
+        return { auth: "인증", user: "사용자", manager: "팀장", operator: "운영", hr: "HR", finance: "재무", admin: "관리자" }[role] || role;
       }
 
       function renderNodeContent(node) {
@@ -768,6 +809,9 @@
             request: { title: "새 요청 화면", route: "/user/requests/custom", role: "user", flow: "request" },
             reservation: { title: "새 예약 화면", route: "/user/reservations/custom", role: "user", flow: "reservation" },
             asset: { title: "새 자산 화면", route: "/admin/assets/custom", role: "admin", flow: "asset" },
+            approval: { title: "새 전자결재 화면", route: "/user/approvals/custom", role: "user", flow: "approval" },
+            attendance: { title: "새 근태 화면", route: "/user/attendance/custom", role: "user", flow: "attendance" },
+            finance: { title: "새 재무 화면", route: "/finance/custom", role: "finance", flow: "finance" },
           };
           nodes.push({ id, ...presets[type], x: 180, y: 860, type: "web" });
           selectedId = id;

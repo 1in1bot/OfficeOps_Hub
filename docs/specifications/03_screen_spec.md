@@ -14,23 +14,37 @@ React, Vite, React Router 기반 화면 구현의 기준 문서로 사용한다.
 | AUTH-SIGNUP | 공통 | 회원가입 | `/signup` | 비로그인 | 필수 |
 | COMMON-FORBIDDEN | 공통 | 권한 없음 | `/forbidden` | 전체 | 필수 |
 | COMMON-NOT-FOUND | 공통 | 404 Not Found | `*` | 전체 | 필수 |
-| USER-HOME | 사용자 | 사용자 홈 | `/user` | ROLE_USER, ROLE_MANAGER, ROLE_OPERATOR, ROLE_ADMIN | 필수 |
-| USER-REQUEST-LIST | 사용자 | 내 요청 목록 | `/user/requests` | ROLE_USER, ROLE_MANAGER, ROLE_OPERATOR, ROLE_ADMIN | 필수 |
-| USER-REQUEST-CREATE | 사용자 | 요청 등록 | `/user/requests/new` | ROLE_USER, ROLE_MANAGER, ROLE_OPERATOR, ROLE_ADMIN | 필수 |
+| USER-HOME | 사용자 | 사용자 홈 | `/user` | 로그인 사용자 | 필수 |
+| USER-REQUEST-LIST | 사용자 | 내 요청 목록 | `/user/requests` | 로그인 사용자 | 필수 |
+| USER-REQUEST-CREATE | 사용자 | 요청 등록 | `/user/requests/new` | 로그인 사용자 | 필수 |
 | USER-REQUEST-DETAIL | 사용자 | 요청 상세 | `/user/requests/:id` | 작성자, 관리자 | 필수 |
-| USER-RESERVATION-LIST | 사용자 | 내 예약 목록 | `/user/reservations` | ROLE_USER, ROLE_MANAGER, ROLE_OPERATOR, ROLE_ADMIN | 필수 |
-| USER-RESERVATION-CREATE | 사용자 | 회의실 예약 | `/user/reservations/new` | ROLE_USER, ROLE_MANAGER, ROLE_OPERATOR, ROLE_ADMIN | 필수 |
-| USER-RESERVATION-CALENDAR | 사용자 | 예약 캘린더 | `/user/reservations/calendar` | ROLE_USER, ROLE_MANAGER, ROLE_OPERATOR, ROLE_ADMIN | 권장 |
-| USER-ASSET-LIST | 사용자 | 자산 목록 | `/user/assets` | ROLE_USER, ROLE_MANAGER, ROLE_OPERATOR, ROLE_ADMIN | 필수 |
-| USER-ASSET-LOAN-LIST | 사용자 | 내 자산 대여 현황 | `/user/asset-loans` | ROLE_USER, ROLE_MANAGER, ROLE_OPERATOR, ROLE_ADMIN | 권장 |
-| USER-ME | 사용자 | 내 정보 | `/user/me` | ROLE_USER, ROLE_MANAGER, ROLE_OPERATOR, ROLE_ADMIN | 필수 |
-| USER-PASSWORD | 사용자 | 비밀번호 변경 | `/user/me/password` | ROLE_USER, ROLE_MANAGER, ROLE_OPERATOR, ROLE_ADMIN | MVP 이후 |
-| USER-NOTIFICATION-LIST | 사용자 | 알림 목록 | `/user/notifications` | ROLE_USER, ROLE_MANAGER, ROLE_OPERATOR, ROLE_ADMIN | 2순위 |
+| USER-RESERVATION-LIST | 사용자 | 내 예약 목록 | `/user/reservations` | 로그인 사용자 | 필수 |
+| USER-RESERVATION-CREATE | 사용자 | 회의실 예약 | `/user/reservations/new` | 로그인 사용자 | 필수 |
+| USER-RESERVATION-CALENDAR | 사용자 | 예약 캘린더 | `/user/reservations/calendar` | 로그인 사용자 | 권장 |
+| USER-ASSET-LIST | 사용자 | 자산 목록 | `/user/assets` | 로그인 사용자 | 필수 |
+| USER-ASSET-LOAN-LIST | 사용자 | 내 자산 대여 현황 | `/user/asset-loans` | 로그인 사용자 | 권장 |
+| USER-ME | 사용자 | 내 정보 | `/user/me` | 로그인 사용자 | 필수 |
+| USER-PASSWORD | 사용자 | 비밀번호 변경 | `/user/me/password` | 로그인 사용자 | MVP 이후 |
+| USER-NOTIFICATION-LIST | 사용자 | 알림 목록 | `/user/notifications` | 로그인 사용자 | 2순위 |
+| USER-ATTENDANCE-HOME | 사용자 | 내 근태 홈 | `/user/attendance` | 로그인 사용자 | 필수 |
+| USER-LEAVE-BALANCE | 사용자 | 내 연차 현황 | `/user/attendance/leaves` | 로그인 사용자 | 필수 |
+| USER-ATTENDANCE-RECORDS | 사용자 | 내 출퇴근 기록 | `/user/attendance/records` | 로그인 사용자 | 필수 |
+| USER-APPROVAL-LIST | 사용자 | 내 전자결재 문서 | `/user/approvals` | 로그인 사용자 | 필수 |
+| USER-APPROVAL-CREATE | 사용자 | 전자결재 작성 | `/user/approvals/new` | 로그인 사용자 | 필수 |
+| USER-APPROVAL-DETAIL | 사용자 | 전자결재 상세 | `/user/approvals/:id` | 작성자, 결재자, 참조자, 관리자 | 필수 |
 | MANAGER-APPROVAL-LIST | 팀장 | 팀 승인 요청함 | `/manager/approvals` | ROLE_MANAGER, ROLE_ADMIN | 필수 |
 | MANAGER-APPROVAL-DETAIL | 팀장 | 팀 승인 요청 상세 | `/manager/approvals/:id` | ROLE_MANAGER, ROLE_ADMIN | 필수 |
+| MANAGER-EAPPROVAL-LIST | 팀장 | 팀 전자결재함 | `/manager/e-approvals` | ROLE_MANAGER, ROLE_ADMIN | 필수 |
+| MANAGER-EAPPROVAL-DETAIL | 팀장 | 팀 전자결재 상세 | `/manager/e-approvals/:id` | ROLE_MANAGER, ROLE_ADMIN | 필수 |
 | ADMIN-DASHBOARD | 관리자 | 관리자 대시보드 | `/admin/dashboard` | ROLE_ADMIN | 필수 |
 | OPERATOR-REQUEST-LIST | 운영 | 운영 요청함 | `/operator/requests` | ROLE_OPERATOR, ROLE_ADMIN | 필수 |
 | OPERATOR-REQUEST-DETAIL | 운영 | 운영 요청 상세 | `/operator/requests/:id` | ROLE_OPERATOR, ROLE_ADMIN | 필수 |
+| HR-ATTENDANCE-DASHBOARD | HR | 근태 대시보드 | `/hr/attendance` | ROLE_HR, ROLE_ADMIN | 필수 |
+| HR-LEAVE-MANAGEMENT | HR | 연차 관리 | `/hr/leaves` | ROLE_HR, ROLE_ADMIN | 필수 |
+| HR-CERTIFICATE-LIST | HR | 증명서 발급 요청 | `/hr/certificates` | ROLE_HR, ROLE_ADMIN | 필수 |
+| HR-EAPPROVAL-LIST | HR | HR 전자결재함 | `/hr/e-approvals` | ROLE_HR, ROLE_ADMIN | 필수 |
+| FINANCE-EAPPROVAL-LIST | 재무 | 재무 전자결재함 | `/finance/e-approvals` | ROLE_FINANCE, ROLE_ADMIN | 필수 |
+| FINANCE-EXPENSE-LIST | 재무 | 지출/법인카드 처리 | `/finance/expenses` | ROLE_FINANCE, ROLE_ADMIN | 필수 |
 | ADMIN-REQUEST-LIST | 관리자 | 전체 요청 관리 | `/admin/requests` | ROLE_OPERATOR, ROLE_ADMIN | 필수 |
 | ADMIN-REQUEST-DETAIL | 관리자 | 요청 상세 관리 | `/admin/requests/:id` | ROLE_OPERATOR, ROLE_ADMIN | 필수 |
 | ADMIN-ASSET-LIST | 관리자 | 자산 관리 | `/admin/assets` | ROLE_OPERATOR, ROLE_ADMIN | 필수 |
@@ -39,6 +53,9 @@ React, Vite, React Router 기반 화면 구현의 기준 문서로 사용한다.
 | ADMIN-RESOURCE-LIST | 관리자 | 회의실/자원 관리 | `/admin/resources` | ROLE_ADMIN | 필수 |
 | ADMIN-USER-LIST | 관리자 | 사용자 관리 | `/admin/users` | ROLE_ADMIN | 선택 |
 | ADMIN-USER-DETAIL | 관리자 | 사용자 상세/권한 변경 | `/admin/users/:id` | ROLE_ADMIN | 권장 |
+| ADMIN-APPROVAL-LIST | 관리자 | 전체 전자결재 관리 | `/admin/approvals` | ROLE_ADMIN | 필수 |
+| ADMIN-APPROVAL-FORM-LIST | 관리자 | 전자결재 양식 관리 | `/admin/approval-forms` | ROLE_ADMIN | 필수 |
+| ADMIN-ATTENDANCE-POLICY | 관리자 | 근태 정책 관리 | `/admin/attendance-policies` | ROLE_ADMIN | 필수 |
 | ADMIN-AUDIT-LOG-LIST | 관리자 | 감사 이력 | `/admin/audit-logs` | ROLE_ADMIN | 필수 |
 
 ## 3. 공통 레이아웃
@@ -70,7 +87,7 @@ React, Vite, React Router 기반 화면 구현의 기준 문서로 사용한다.
 - 사이드바
 - 사용자 이름/부서 표시
 - 로그아웃 버튼
-- 메뉴: 사용자 홈, 내 요청, 회의실 예약, 예약 캘린더, 자산 목록, 내 자산 대여 현황, 내 정보
+- 메뉴: 사용자 홈, 내 요청, 회의실 예약, 예약 캘린더, 자산 목록, 내 자산 대여 현황, 내 근태, 전자결재, 알림, 내 정보
 
 ### 3.3 관리자 레이아웃
 
@@ -86,9 +103,11 @@ React, Vite, React Router 기반 화면 구현의 기준 문서로 사용한다.
 - 사이드바
 - 관리자 표시
 - 로그아웃 버튼
-- 팀장 메뉴: 팀 승인 요청함
 - 운영 담당자 메뉴: 운영 요청함, 자산 관리, 예약 관리
-- 관리자 메뉴: 대시보드, 요청 관리, 자산 관리, 예약 관리, 회의실/자원 관리, 사용자 관리, 감사 이력
+- 팀장 메뉴: 팀 승인 요청함, 팀 전자결재함
+- HR 메뉴: 근태 대시보드, 연차 관리, 증명서 발급 요청, HR 전자결재함
+- 재무 메뉴: 재무 전자결재함, 지출/법인카드 처리
+- 관리자 메뉴: 대시보드, 요청 관리, 자산 관리, 예약 관리, 회의실/자원 관리, 사용자 관리, 전자결재 관리, 전자결재 양식 관리, 근태 정책 관리, 감사 이력
 
 ## 4. 공통 화면
 
@@ -956,7 +975,7 @@ React, Vite, React Router 기반 화면 구현의 기준 문서로 사용한다.
 
 | 액션 | 설명 |
 | --- | --- |
-| 권한 변경 | ROLE_USER, ROLE_MANAGER, ROLE_OPERATOR, ROLE_ADMIN으로 변경 |
+| 권한 변경 | ROLE_USER, ROLE_MANAGER, ROLE_OPERATOR, ROLE_HR, ROLE_FINANCE, ROLE_ADMIN으로 변경 |
 | 비활성화 | ACTIVE 사용자를 INACTIVE로 변경 |
 | 활성화 | INACTIVE 사용자를 ACTIVE로 변경 |
 | 목록 | 사용자 관리 목록으로 이동 |
@@ -1005,9 +1024,193 @@ React, Vite, React Router 기반 화면 구현의 기준 문서로 사용한다.
 | 로그인 사용자가 `/login` 접근 | 권한에 맞는 홈으로 이동 |
 | 존재하지 않는 URL 접근 | 404 Not Found 화면 표시 |
 
-## 10. 프론트엔드 상태 관리 기준
+## 10. HR/전자결재 화면
 
-### 10.1 Zustand 관리 대상
+### USER-ATTENDANCE-HOME. 내 근태 홈
+
+| 항목 | 내용 |
+| --- | --- |
+| URL | `/user/attendance` |
+| 접근 권한 | 로그인 사용자 |
+| 목적 | 내 연차, 오늘 근무 상태, 최근 근태 신청을 요약한다. |
+| 연결 API | `GET /api/attendance/me/summary`, `GET /api/attendance/me/records`, `GET /api/approvals` |
+
+주요 UI:
+
+- 오늘 출근/퇴근 상태 카드
+- 이번 달 근무시간 요약
+- 연차 잔여일수 카드
+- 최근 근태/연차 신청 목록
+- 빠른 액션: 출근, 퇴근, 연차 신청, 근무제 신청
+
+### USER-LEAVE-BALANCE. 내 연차 현황
+
+| 항목 | 내용 |
+| --- | --- |
+| URL | `/user/attendance/leaves` |
+| 접근 권한 | 로그인 사용자 |
+| 목적 | 내 연차 발생/사용/잔여 현황과 사용 내역을 확인한다. |
+| 연결 API | `GET /api/attendance/leaves/me`, `GET /api/attendance/leaves/me/usages` |
+
+주요 UI:
+
+- 기준 연도 선택
+- 총 발생/사용/예정 차감/잔여 연차 카드
+- 연차 사용 내역 테이블
+- 연차 신청, 연차 취소 신청 버튼
+
+### USER-ATTENDANCE-RECORDS. 내 출퇴근 기록
+
+| 항목 | 내용 |
+| --- | --- |
+| URL | `/user/attendance/records` |
+| 접근 권한 | 로그인 사용자 |
+| 목적 | 출근, 퇴근, 휴게, 근무시간 기록을 조회한다. |
+| 연결 API | `GET /api/attendance/records/me`, `POST /api/attendance/records/check-in`, `POST /api/attendance/records/check-out` |
+
+주요 UI:
+
+- 월 선택
+- 출근/퇴근 버튼
+- 일자별 출근/퇴근/휴게/총 근무시간 테이블
+- 누락 기록 안내
+
+### USER-APPROVAL-LIST. 내 전자결재 문서
+
+| 항목 | 내용 |
+| --- | --- |
+| URL | `/user/approvals` |
+| 접근 권한 | 로그인 사용자 |
+| 목적 | 내가 작성했거나 결재/참조 대상인 전자결재 문서를 조회한다. |
+| 연결 API | `GET /api/approvals` |
+
+검색/필터:
+
+- 문서 유형
+- 결재 상태
+- 작성일
+- 키워드
+
+버튼/액션:
+
+| 액션 | 설명 |
+| --- | --- |
+| 새 문서 작성 | `/user/approvals/new`로 이동 |
+| 상세 보기 | `/user/approvals/:id`로 이동 |
+| 임시저장 문서 수정 | DRAFT 문서 작성 화면 이동 |
+
+### USER-APPROVAL-CREATE. 전자결재 작성
+
+| 항목 | 내용 |
+| --- | --- |
+| URL | `/user/approvals/new` |
+| 접근 권한 | 로그인 사용자 |
+| 목적 | 문서 유형별 전자결재 문서를 작성한다. |
+| 연결 API | `POST /api/approvals`, `POST /api/approvals/{id}/submit` |
+
+문서 유형:
+
+- 연차 신청서, 연차 취소 신청서
+- 재택근무, 외근, 출장, 시차출퇴근, 초과근무 신청서
+- 지출결의서, 법인카드 사용내역서
+- 재직증명서, 경력증명서 신청서
+
+처리 규칙:
+
+- 문서 유형 선택 시 입력 폼이 변경된다.
+- 임시저장과 상신 버튼을 분리한다.
+- 상신 전 예상 결재선을 표시한다.
+
+### USER-APPROVAL-DETAIL. 전자결재 상세
+
+| 항목 | 내용 |
+| --- | --- |
+| URL | `/user/approvals/:id` |
+| 접근 권한 | 작성자, 결재자, 참조자, ROLE_ADMIN |
+| 목적 | 결재 문서 본문, 결재선, 이력, 처리 결과를 확인한다. |
+| 연결 API | `GET /api/approvals/{id}`, `PATCH /api/approvals/{id}/cancel` |
+
+주요 UI:
+
+- 문서 제목/유형/상태
+- 결재선 타임라인
+- 문서 유형별 상세 입력값
+- 승인/반려 이력
+- 취소 신청 또는 문서 취소 버튼
+
+### MANAGER-EAPPROVAL-LIST / DETAIL. 팀 전자결재함
+
+| 항목 | 내용 |
+| --- | --- |
+| URL | `/manager/e-approvals`, `/manager/e-approvals/:id` |
+| 접근 권한 | ROLE_MANAGER, ROLE_ADMIN |
+| 목적 | 소속 팀원의 전자결재 문서를 1차 승인 또는 반려한다. |
+| 연결 API | `GET /api/manager/e-approvals`, `GET /api/manager/e-approvals/{id}`, `PATCH /api/manager/e-approvals/{id}/approve`, `PATCH /api/manager/e-approvals/{id}/reject` |
+
+### HR-ATTENDANCE-DASHBOARD. 근태 대시보드
+
+| 항목 | 내용 |
+| --- | --- |
+| URL | `/hr/attendance` |
+| 접근 권한 | ROLE_HR, ROLE_ADMIN |
+| 목적 | 부서/팀 단위 근태 현황과 누락 기록을 관리한다. |
+| 연결 API | `GET /api/hr/attendance/summary`, `GET /api/hr/attendance/reports` |
+
+주요 UI:
+
+- 부서별 근무시간 요약
+- 출퇴근 누락/지각/조퇴 현황
+- 연차 사용 예정자
+- 월간 근태 리포트
+
+### HR-LEAVE-MANAGEMENT. 연차 관리
+
+| 항목 | 내용 |
+| --- | --- |
+| URL | `/hr/leaves` |
+| 접근 권한 | ROLE_HR, ROLE_ADMIN |
+| 목적 | 사용자별 연차 현황과 조정 내역을 관리한다. |
+| 연결 API | `GET /api/hr/leaves`, `POST /api/hr/leaves/{userId}/adjustments` |
+
+### HR-CERTIFICATE-LIST. 증명서 발급 요청
+
+| 항목 | 내용 |
+| --- | --- |
+| URL | `/hr/certificates` |
+| 접근 권한 | ROLE_HR, ROLE_ADMIN |
+| 목적 | 재직증명서/경력증명서 신청을 확인하고 처리한다. |
+| 연결 API | `GET /api/hr/certificates`, `PATCH /api/hr/certificates/{id}/complete` |
+
+### HR-EAPPROVAL-LIST. HR 전자결재함
+
+| 항목 | 내용 |
+| --- | --- |
+| URL | `/hr/e-approvals` |
+| 접근 권한 | ROLE_HR, ROLE_ADMIN |
+| 목적 | 연차, 근태, 증명서 관련 최종 결재 문서를 처리한다. |
+| 연결 API | `GET /api/hr/e-approvals`, `PATCH /api/hr/e-approvals/{id}/approve`, `PATCH /api/hr/e-approvals/{id}/reject` |
+
+### FINANCE-EAPPROVAL-LIST / FINANCE-EXPENSE-LIST. 재무 결재/비용 처리
+
+| 항목 | 내용 |
+| --- | --- |
+| URL | `/finance/e-approvals`, `/finance/expenses` |
+| 접근 권한 | ROLE_FINANCE, ROLE_ADMIN |
+| 목적 | 지출결의서와 법인카드 사용내역서를 검토하고 처리한다. |
+| 연결 API | `GET /api/finance/e-approvals`, `GET /api/finance/expenses`, `PATCH /api/finance/expenses/{id}/process` |
+
+### ADMIN-APPROVAL-LIST / FORM / POLICY. 전자결재/근태 관리자 화면
+
+| 항목 | 내용 |
+| --- | --- |
+| URL | `/admin/approvals`, `/admin/approval-forms`, `/admin/attendance-policies` |
+| 접근 권한 | ROLE_ADMIN |
+| 목적 | 전체 결재 문서, 결재 양식, 근태 정책을 관리한다. |
+| 연결 API | `GET /api/admin/approvals`, `GET /api/admin/approval-forms`, `POST /api/admin/attendance-policies` |
+
+## 11. 프론트엔드 상태 관리 기준
+
+### 11.1 Zustand 관리 대상
 
 - 로그인 사용자 정보
 - Access Token
@@ -1015,7 +1218,7 @@ React, Vite, React Router 기반 화면 구현의 기준 문서로 사용한다.
 - 사이드바 열림/닫힘
 - 전역 UI 상태
 
-### 10.2 TanStack Query 관리 대상
+### 11.2 TanStack Query 관리 대상
 
 - 내 요청 목록
 - 요청 상세
@@ -1032,7 +1235,7 @@ React, Vite, React Router 기반 화면 구현의 기준 문서로 사용한다.
 - 감사 이력
 - 대시보드 통계
 
-## 11. 공통 UI 정책
+## 12. 공통 UI 정책
 
 - 목록 화면은 로딩 상태, 빈 목록 상태, 에러 상태를 표시한다.
 - 생성/수정 폼은 필수 입력값 에러를 필드 단위로 표시한다.
