@@ -19,6 +19,8 @@ Fluid UI에서는 다음 그룹 단위로 페이지를 묶는다.
 | User | 파란색 | 사용자 홈, 내 요청, 예약, 자산, 내 정보 |
 | Manager | 초록색 | 팀 승인 요청함, 팀 승인 상세 |
 | Operator | 보라색 | 운영 요청함, 운영 요청 상세 |
+| HR | 청록색 | 근태 대시보드, 연차 관리, 증명서, HR 전자결재함 |
+| Finance | 주황색 | 재무 전자결재함, 지출/법인카드 처리 |
 | Admin | 빨간색 | 관리자 대시보드, 전체 관리 화면 |
 
 ### 2.2 연결선 표기
@@ -39,6 +41,8 @@ Fluid UI에서는 다음 그룹 단위로 페이지를 묶는다.
 | ROLE_USER | `/user` |
 | ROLE_MANAGER | `/user` |
 | ROLE_OPERATOR | `/operator/requests` |
+| ROLE_HR | `/hr/attendance` |
+| ROLE_FINANCE | `/finance/e-approvals` |
 | ROLE_ADMIN | `/admin/dashboard` |
 
 `ROLE_MANAGER`도 일반 사용자 업무를 수행할 수 있으므로 `/user` 화면을 함께 사용할 수 있다.
@@ -58,6 +62,8 @@ flowchart TD
     USER_HOME[USER-HOME<br/>/user]
     MANAGER_LIST[MANAGER-APPROVAL-LIST<br/>/manager/approvals]
     OPERATOR_LIST[OPERATOR-REQUEST-LIST<br/>/operator/requests]
+    HR_HOME[HR-ATTENDANCE-DASHBOARD<br/>/hr/attendance]
+    FINANCE_HOME[FINANCE-EAPPROVAL-LIST<br/>/finance/e-approvals]
     ADMIN_DASHBOARD[ADMIN-DASHBOARD<br/>/admin/dashboard]
 
     START --> LOGIN
@@ -67,11 +73,15 @@ flowchart TD
     LOGIN -->|ROLE_USER| USER_HOME
     LOGIN -->|ROLE_MANAGER| USER_HOME
     LOGIN -->|ROLE_OPERATOR| OPERATOR_LIST
+    LOGIN -->|ROLE_HR| HR_HOME
+    LOGIN -->|ROLE_FINANCE| FINANCE_HOME
     LOGIN -->|ROLE_ADMIN| ADMIN_DASHBOARD
 
     USER_HOME -.권한 없음.-> FORBIDDEN
     MANAGER_LIST -.권한 없음.-> FORBIDDEN
     OPERATOR_LIST -.권한 없음.-> FORBIDDEN
+    HR_HOME -.권한 없음.-> FORBIDDEN
+    FINANCE_HOME -.권한 없음.-> FORBIDDEN
     ADMIN_DASHBOARD -.권한 없음.-> FORBIDDEN
 
     START -.정의되지 않은 URL.-> NOT_FOUND
@@ -445,9 +455,83 @@ flowchart TD
     USER_DETAIL -->|목록| USER_LIST
 ```
 
-## 12. Fluid UI 화면 노드 목록
+## 12. 근태/전자결재 화면 흐름
 
-### 12.1 MVP 필수 화면
+### 12.1 사용자 근태/전자결재 흐름
+
+```mermaid
+flowchart TD
+    USER_HOME[USER-HOME<br/>/user]
+    ATT_HOME[USER-ATTENDANCE-HOME<br/>/user/attendance]
+    LEAVE_BALANCE[USER-LEAVE-BALANCE<br/>/user/attendance/leaves]
+    ATT_RECORDS[USER-ATTENDANCE-RECORDS<br/>/user/attendance/records]
+    APPROVAL_LIST[USER-APPROVAL-LIST<br/>/user/approvals]
+    APPROVAL_CREATE[USER-APPROVAL-CREATE<br/>/user/approvals/new]
+    APPROVAL_DETAIL[USER-APPROVAL-DETAIL<br/>/user/approvals/:id]
+
+    USER_HOME --> ATT_HOME
+    ATT_HOME --> LEAVE_BALANCE
+    ATT_HOME --> ATT_RECORDS
+    ATT_HOME --> APPROVAL_CREATE
+    USER_HOME --> APPROVAL_LIST
+    APPROVAL_LIST --> APPROVAL_CREATE
+    APPROVAL_LIST --> APPROVAL_DETAIL
+    APPROVAL_CREATE -->|임시저장| APPROVAL_DETAIL
+    APPROVAL_CREATE -->|상신| APPROVAL_DETAIL
+```
+
+### 12.2 전자결재 승인 흐름
+
+```mermaid
+flowchart TD
+    DRAFT[문서 작성/임시저장]
+    SUBMIT[상신]
+    MANAGER_BOX[팀 전자결재함<br/>/manager/e-approvals]
+    MANAGER_DECISION{팀장 결정}
+    FINAL_BRANCH{문서 유형}
+    HR_BOX[HR 전자결재함<br/>/hr/e-approvals]
+    FINANCE_BOX[재무 전자결재함<br/>/finance/e-approvals]
+    ADMIN_BOX[관리자 전자결재 관리<br/>/admin/approvals]
+    APPROVED[APPROVED]
+    COMPLETED[COMPLETED]
+    REJECTED[REJECTED]
+
+    DRAFT --> SUBMIT
+    SUBMIT --> MANAGER_BOX
+    MANAGER_BOX --> MANAGER_DECISION
+    MANAGER_DECISION -->|승인| FINAL_BRANCH
+    MANAGER_DECISION -->|반려| REJECTED
+    FINAL_BRANCH -->|연차/근태/증명서| HR_BOX
+    FINAL_BRANCH -->|지출/법인카드| FINANCE_BOX
+    FINAL_BRANCH -->|관리자 처리| ADMIN_BOX
+    HR_BOX --> APPROVED
+    FINANCE_BOX --> APPROVED
+    ADMIN_BOX --> APPROVED
+    APPROVED --> COMPLETED
+```
+
+### 12.3 HR/Finance 운영 흐름
+
+```mermaid
+flowchart TD
+    HR_DASH[근태 대시보드<br/>/hr/attendance]
+    HR_LEAVES[연차 관리<br/>/hr/leaves]
+    HR_CERT[증명서 발급 요청<br/>/hr/certificates]
+    HR_APPROVALS[HR 전자결재함<br/>/hr/e-approvals]
+    FIN_APPROVALS[재무 전자결재함<br/>/finance/e-approvals]
+    FIN_EXPENSES[지출/법인카드 처리<br/>/finance/expenses]
+
+    HR_DASH --> HR_LEAVES
+    HR_DASH --> HR_CERT
+    HR_DASH --> HR_APPROVALS
+    HR_APPROVALS -->|연차 승인| HR_LEAVES
+    HR_APPROVALS -->|증명서 처리| HR_CERT
+    FIN_APPROVALS --> FIN_EXPENSES
+```
+
+## 13. Fluid UI 화면 노드 목록
+
+### 13.1 MVP 필수 화면
 
 | 화면 ID | 화면명 | URL | 그룹 | 연결 대상 |
 | --- | --- | --- | --- | --- |
@@ -455,7 +539,7 @@ flowchart TD
 | AUTH-SIGNUP | 회원가입 | `/signup` | Auth | 로그인 |
 | COMMON-FORBIDDEN | 권한 없음 | `/forbidden` | Common | 권한별 홈, 이전 화면 |
 | COMMON-NOT-FOUND | 404 Not Found | `*` | Common | 권한별 홈, 로그인 |
-| USER-HOME | 사용자 홈 | `/user` | User | 내 요청, 요청 등록, 내 예약, 예약 등록, 자산 목록, 내 정보 |
+| USER-HOME | 사용자 홈 | `/user` | User | 내 요청, 요청 등록, 내 예약, 예약 등록, 자산 목록, 내 근태, 전자결재, 내 정보 |
 | USER-REQUEST-LIST | 내 요청 목록 | `/user/requests` | User | 요청 등록, 요청 상세 |
 | USER-REQUEST-CREATE | 요청 등록 | `/user/requests/new` | User | 요청 상세, 내 요청 목록 |
 | USER-REQUEST-DETAIL | 요청 상세 | `/user/requests/:id` | User | 내 요청 목록 |
@@ -463,19 +547,36 @@ flowchart TD
 | USER-RESERVATION-CREATE | 회의실 예약 | `/user/reservations/new` | User | 내 예약 목록 |
 | USER-ASSET-LIST | 자산 목록 | `/user/assets` | User | 내 자산 대여 현황 |
 | USER-ME | 내 정보 | `/user/me` | User | 비밀번호 변경 |
+| USER-ATTENDANCE-HOME | 내 근태 홈 | `/user/attendance` | User | 내 연차 현황, 출퇴근 기록, 전자결재 작성 |
+| USER-LEAVE-BALANCE | 내 연차 현황 | `/user/attendance/leaves` | User | 전자결재 작성 |
+| USER-ATTENDANCE-RECORDS | 내 출퇴근 기록 | `/user/attendance/records` | User | 내 근태 홈 |
+| USER-APPROVAL-LIST | 내 전자결재 문서 | `/user/approvals` | User | 전자결재 작성, 전자결재 상세 |
+| USER-APPROVAL-CREATE | 전자결재 작성 | `/user/approvals/new` | User | 전자결재 상세 |
+| USER-APPROVAL-DETAIL | 전자결재 상세 | `/user/approvals/:id` | User | 내 전자결재 문서 |
 | MANAGER-APPROVAL-LIST | 팀 승인 요청함 | `/manager/approvals` | Manager | 팀 승인 요청 상세 |
 | MANAGER-APPROVAL-DETAIL | 팀 승인 요청 상세 | `/manager/approvals/:id` | Manager | 팀 승인 요청함 |
+| MANAGER-EAPPROVAL-LIST | 팀 전자결재함 | `/manager/e-approvals` | Manager | 팀 전자결재 상세 |
+| MANAGER-EAPPROVAL-DETAIL | 팀 전자결재 상세 | `/manager/e-approvals/:id` | Manager | HR/재무 전자결재함 |
 | OPERATOR-REQUEST-LIST | 운영 요청함 | `/operator/requests` | Operator | 운영 요청 상세 |
 | OPERATOR-REQUEST-DETAIL | 운영 요청 상세 | `/operator/requests/:id` | Operator | 운영 요청함 |
+| HR-ATTENDANCE-DASHBOARD | 근태 대시보드 | `/hr/attendance` | HR | 연차 관리, 증명서, HR 전자결재함 |
+| HR-LEAVE-MANAGEMENT | 연차 관리 | `/hr/leaves` | HR | 근태 대시보드 |
+| HR-CERTIFICATE-LIST | 증명서 발급 요청 | `/hr/certificates` | HR | HR 전자결재함 |
+| HR-EAPPROVAL-LIST | HR 전자결재함 | `/hr/e-approvals` | HR | 연차 관리, 증명서 |
+| FINANCE-EAPPROVAL-LIST | 재무 전자결재함 | `/finance/e-approvals` | Finance | 지출/법인카드 처리 |
+| FINANCE-EXPENSE-LIST | 지출/법인카드 처리 | `/finance/expenses` | Finance | 재무 전자결재함 |
 | ADMIN-DASHBOARD | 관리자 대시보드 | `/admin/dashboard` | Admin | 관리자 주요 목록 |
 | ADMIN-REQUEST-LIST | 전체 요청 관리 | `/admin/requests` | Admin | 요청 상세 관리 |
 | ADMIN-REQUEST-DETAIL | 요청 상세 관리 | `/admin/requests/:id` | Admin | 전체 요청 관리 |
 | ADMIN-ASSET-LIST | 자산 관리 | `/admin/assets` | Admin | 등록/수정/상태/대여/반납 모달 |
 | ADMIN-RESERVATION-LIST | 예약 관리 | `/admin/reservations` | Admin | 관리자 예약 캘린더 |
 | ADMIN-RESOURCE-LIST | 회의실/자원 관리 | `/admin/resources` | Admin | 등록/수정/상태 변경 모달 |
+| ADMIN-APPROVAL-LIST | 전체 전자결재 관리 | `/admin/approvals` | Admin | 전자결재 양식 관리 |
+| ADMIN-APPROVAL-FORM-LIST | 전자결재 양식 관리 | `/admin/approval-forms` | Admin | 전체 전자결재 관리 |
+| ADMIN-ATTENDANCE-POLICY | 근태 정책 관리 | `/admin/attendance-policies` | Admin | 대시보드 |
 | ADMIN-AUDIT-LOG-LIST | 감사 이력 | `/admin/audit-logs` | Admin | 대시보드 |
 
-### 12.2 2순위 및 MVP 이후 화면
+### 13.2 2순위 및 MVP 이후 화면
 
 | 화면 ID | 화면명 | URL | 우선순위 |
 | --- | --- | --- | --- |
@@ -487,7 +588,7 @@ flowchart TD
 | ADMIN-USER-LIST | 사용자 관리 | `/admin/users` | 선택 |
 | ADMIN-USER-DETAIL | 사용자 상세/권한 변경 | `/admin/users/:id` | 권장 |
 
-## 13. Fluid UI 제작 순서 제안
+## 14. Fluid UI 제작 순서 제안
 
 1. `AUTH-LOGIN`, `AUTH-SIGNUP`, `COMMON-FORBIDDEN`, `COMMON-NOT-FOUND`를 먼저 배치한다.
 2. 중앙에 `USER-HOME`을 놓고 사용자 업무 화면을 좌측 또는 하단으로 연결한다.
@@ -497,7 +598,7 @@ flowchart TD
 6. 예약, 자산, 사용자 관리, 감사 이력은 관리자 대시보드에서 분기되는 보조 흐름으로 구성한다.
 7. 모달은 별도 화면 카드로 만들되, 실제 라우팅 화면과 다른 색상 또는 작은 카드로 표현한다.
 
-## 14. MVP 구현 우선순위 기준 화면 흐름
+## 15. MVP 구현 우선순위 기준 화면 흐름
 
 MVP 화면흐름도만 먼저 그릴 경우 다음 흐름을 우선 구성한다.
 

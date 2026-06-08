@@ -504,6 +504,14 @@
         border-color: rgba(124, 58, 237, 0.5);
       }
 
+      .accent-teal {
+        border-color: rgba(13, 148, 136, 0.5);
+      }
+
+      .accent-amber {
+        border-color: rgba(217, 119, 6, 0.5);
+      }
+
       .accent-red {
         border-color: rgba(220, 38, 38, 0.5);
       }
@@ -773,7 +781,8 @@
 07 테스트: 필수 QA 시나리오
 09 Fluid UI: 화면흐름도 작성 기준
 Project Charter: 4주 MVP/확장/성과 기준
-Detailed Plan: 포트폴리오 관점/예약 제한/확장 기능</textarea>
+Detailed Plan: 포트폴리오 관점/예약 제한/확장 기능
+HR 확장: 근태/연차/전자결재/증명서/비용 문서</textarea>
           </div>
           <div class="property">
             <label>System notes</label>
@@ -788,7 +797,7 @@ MVP 요청 유형은 ASSET_REQUEST, VISITOR_REQUEST, FACILITY_REQUEST다.</texta
 
       <footer class="statusbar">
         <span id="flowStatus">Preview ready · 카드를 누르면 다음 화면으로 이동합니다.</span>
-        <span>30 screens · full screen spec · Grid 28px</span>
+        <span>47 screens · HR/e-approval expanded · Grid 28px</span>
       </footer>
     </div>
     <div class="toast" id="toast">다음 화면으로 이동했습니다.</div>
@@ -811,12 +820,28 @@ MVP 요청 유형은 ASSET_REQUEST, VISITOR_REQUEST, FACILITY_REQUEST다.</texta
         { id: "user-me", no: "14", group: "User", title: "내 정보", route: "/user/me", priority: "필수", x: 740, y: 120, next: "user-password" },
         { id: "user-password", no: "15", group: "User", title: "비밀번호 변경", route: "/user/me/password", priority: "MVP 이후", x: 1060, y: 120, next: "user-me" },
         { id: "user-notification-list", no: "16", group: "User", title: "알림 목록", route: "/user/notifications", priority: "2순위", x: 740, y: 360, next: "user-request-detail" },
+        { id: "user-attendance-home", no: "31", group: "User", title: "내 근태 홈", route: "/user/attendance", priority: "필수", x: 740, y: 600, next: "user-leave-balance" },
+        { id: "user-leave-balance", no: "32", group: "User", title: "내 연차 현황", route: "/user/attendance/leaves", priority: "필수", x: 740, y: 840, next: "user-approval-create" },
+        { id: "user-attendance-records", no: "33", group: "User", title: "내 출퇴근 기록", route: "/user/attendance/records", priority: "필수", x: 1060, y: 840, next: "user-attendance-home" },
+        { id: "user-approval-list", no: "34", group: "User", title: "내 전자결재 문서", route: "/user/approvals", priority: "필수", x: 1060, y: 360, next: "user-approval-create" },
+        { id: "user-approval-create", no: "35", group: "User", title: "전자결재 작성", route: "/user/approvals/new", priority: "필수", x: 1060, y: 1560, next: "user-approval-detail" },
+        { id: "user-approval-detail", no: "36", group: "User", title: "전자결재 상세", route: "/user/approvals/:id", priority: "필수", x: 1380, y: 1560, next: "manager-eapproval-list" },
 
         { id: "manager-approval-list", no: "17", group: "Manager", title: "팀 승인 요청함", route: "/manager/approvals", priority: "필수", x: 1060, y: 600, next: "manager-approval-detail" },
         { id: "manager-approval-detail", no: "18", group: "Manager", title: "팀 승인 요청 상세", route: "/manager/approvals/:id", priority: "필수", x: 1380, y: 600, next: "operator-request-list" },
+        { id: "manager-eapproval-list", no: "37", group: "Manager", title: "팀 전자결재함", route: "/manager/e-approvals", priority: "필수", x: 1380, y: 120, next: "manager-eapproval-detail" },
+        { id: "manager-eapproval-detail", no: "38", group: "Manager", title: "팀 전자결재 상세", route: "/manager/e-approvals/:id", priority: "필수", x: 1700, y: 120, next: "hr-eapproval-list" },
 
         { id: "operator-request-list", no: "19", group: "Operator", title: "운영 요청함", route: "/operator/requests", priority: "필수", x: 1700, y: 360, next: "operator-request-detail" },
         { id: "operator-request-detail", no: "20", group: "Operator", title: "운영 요청 상세", route: "/operator/requests/:id", priority: "필수", x: 1700, y: 600, next: "admin-request-list" },
+
+        { id: "hr-attendance-dashboard", no: "39", group: "HR", title: "근태 대시보드", route: "/hr/attendance", priority: "필수", x: 2020, y: 1560, next: "hr-leave-management" },
+        { id: "hr-leave-management", no: "40", group: "HR", title: "연차 관리", route: "/hr/leaves", priority: "필수", x: 2340, y: 1560, next: "hr-certificate-list" },
+        { id: "hr-certificate-list", no: "41", group: "HR", title: "증명서 발급 요청", route: "/hr/certificates", priority: "필수", x: 2660, y: 1560, next: "hr-eapproval-list" },
+        { id: "hr-eapproval-list", no: "42", group: "HR", title: "HR 전자결재함", route: "/hr/e-approvals", priority: "필수", x: 2020, y: 1800, next: "hr-attendance-dashboard" },
+
+        { id: "finance-eapproval-list", no: "43", group: "Finance", title: "재무 전자결재함", route: "/finance/e-approvals", priority: "필수", x: 2340, y: 1800, next: "finance-expense-list" },
+        { id: "finance-expense-list", no: "44", group: "Finance", title: "지출/법인카드 처리", route: "/finance/expenses", priority: "필수", x: 2660, y: 1800, next: "admin-approval-list" },
 
         { id: "admin-dashboard", no: "21", group: "Admin", title: "관리자 대시보드", route: "/admin/dashboard", priority: "필수", x: 2020, y: 120, next: "admin-request-list" },
         { id: "admin-request-list", no: "22", group: "Admin", title: "전체 요청 관리", route: "/admin/requests", priority: "필수", x: 2020, y: 360, next: "admin-request-detail" },
@@ -828,6 +853,9 @@ MVP 요청 유형은 ASSET_REQUEST, VISITOR_REQUEST, FACILITY_REQUEST다.</texta
         { id: "admin-user-list", no: "28", group: "Admin", title: "사용자 관리", route: "/admin/users", priority: "선택", x: 2340, y: 120, next: "admin-user-detail" },
         { id: "admin-user-detail", no: "29", group: "Admin", title: "사용자 상세/권한 변경", route: "/admin/users/:id", priority: "권장", x: 2340, y: 360, next: "admin-audit-log-list" },
         { id: "admin-audit-log-list", no: "30", group: "Admin", title: "감사 이력", route: "/admin/audit-logs", priority: "필수", x: 2340, y: 600, next: "admin-dashboard" },
+        { id: "admin-approval-list", no: "45", group: "Admin", title: "전체 전자결재 관리", route: "/admin/approvals", priority: "필수", x: 2660, y: 120, next: "admin-approval-form-list" },
+        { id: "admin-approval-form-list", no: "46", group: "Admin", title: "전자결재 양식 관리", route: "/admin/approval-forms", priority: "필수", x: 2660, y: 360, next: "admin-attendance-policy" },
+        { id: "admin-attendance-policy", no: "47", group: "Admin", title: "근태 정책 관리", route: "/admin/attendance-policies", priority: "필수", x: 2660, y: 600, next: "admin-dashboard" },
       ];
 
       const accessByGroup = {
@@ -836,6 +864,8 @@ MVP 요청 유형은 ASSET_REQUEST, VISITOR_REQUEST, FACILITY_REQUEST다.</texta
         User: "로그인 사용자",
         Manager: "ROLE_MANAGER, ROLE_ADMIN",
         Operator: "ROLE_OPERATOR, ROLE_ADMIN",
+        HR: "ROLE_HR, ROLE_ADMIN",
+        Finance: "ROLE_FINANCE, ROLE_ADMIN",
         Admin: "ROLE_ADMIN / 일부 ROLE_OPERATOR",
       };
 
@@ -936,6 +966,42 @@ MVP 요청 유형은 ASSET_REQUEST, VISITOR_REQUEST, FACILITY_REQUEST다.</texta
           policy: ["target_type/target_id 저장", "2순위"],
           test: ["NOTI-TC-001", "NOTI-TC-002", "NOTI-TC-003"],
         },
+        "user-attendance-home": {
+          api: ["GET /attendance/me/summary", "GET /attendance/records/me"],
+          actions: ["출근", "퇴근", "연차 현황", "근태 신청"],
+          policy: ["로그인 사용자 본인 근태", "CHECKED_IN/CHECKED_OUT 상태 관리"],
+          test: ["ATT-TC-001", "ATT-TC-005", "ATT-TC-007"],
+        },
+        "user-leave-balance": {
+          api: ["GET /attendance/leaves/me", "GET /attendance/leaves/me/usages"],
+          actions: ["연차 잔여 확인", "연차 신청", "연차 취소 신청"],
+          policy: ["승인 시 차감", "취소 승인 시 복원", "잔여 연차 부족 차단"],
+          test: ["ATT-TC-001", "ATT-TC-002", "ATT-TC-003", "ATT-TC-004"],
+        },
+        "user-attendance-records": {
+          api: ["GET /attendance/records/me", "POST /attendance/records/check-in", "POST /attendance/records/check-out"],
+          actions: ["월별 기록 조회", "출근 기록", "퇴근 기록"],
+          policy: ["하루 1개 근태 기록", "중복 출근/퇴근 차단"],
+          test: ["ATT-TC-005", "ATT-TC-006", "ATT-TC-007"],
+        },
+        "user-approval-list": {
+          api: ["GET /approvals"],
+          actions: ["문서 검색", "문서 작성", "상세 이동"],
+          policy: ["작성자/결재자/참조자 조회", "문서 유형/상태 필터"],
+          test: ["EAPP-TC-001", "EAPP-TC-002"],
+        },
+        "user-approval-create": {
+          api: ["POST /approvals", "POST /approvals/{id}/submit"],
+          actions: ["문서 유형 선택", "임시저장", "상신", "예상 결재선 확인"],
+          policy: ["연차/근무제/증명서/비용 양식", "상신 시 approval_steps 생성"],
+          test: ["EAPP-TC-001", "EAPP-TC-002", "FE-TC-007"],
+        },
+        "user-approval-detail": {
+          api: ["GET /approvals/{id}", "PATCH /approvals/{id}/cancel"],
+          actions: ["본문 확인", "결재선 타임라인", "이력 조회", "취소"],
+          policy: ["DRAFT만 수정", "상신 후 본문 수정 불가", "approval_histories 저장"],
+          test: ["EAPP-TC-010", "EAPP-TC-011"],
+        },
         "manager-approval-list": {
           api: ["GET /manager/approvals"],
           actions: ["소속 팀 요청 조회", "검색/필터", "상세 이동"],
@@ -947,6 +1013,18 @@ MVP 요청 유형은 ASSET_REQUEST, VISITOR_REQUEST, FACILITY_REQUEST다.</texta
           actions: ["1차 승인", "1차 반려", "반려 사유 입력"],
           policy: ["PENDING_MANAGER_APPROVAL -> PENDING_OPERATOR_APPROVAL/REJECTED", "request_approvals 저장"],
           test: ["APR-TC-001", "APR-TC-002", "APR-TC-009"],
+        },
+        "manager-eapproval-list": {
+          api: ["GET /manager/e-approvals"],
+          actions: ["소속 팀 결재 조회", "문서 유형 필터", "상세 이동"],
+          policy: ["manager_id 기준 소속 팀만", "PENDING_MANAGER_APPROVAL 중심"],
+          test: ["EAPP-TC-003", "EAPP-TC-004"],
+        },
+        "manager-eapproval-detail": {
+          api: ["PATCH /manager/e-approvals/{id}/approve", "PATCH /manager/e-approvals/{id}/reject"],
+          actions: ["팀장 승인", "팀장 반려", "반려 사유 입력"],
+          policy: ["승인 시 PENDING_FINAL_APPROVAL", "반려 사유 필수"],
+          test: ["EAPP-TC-003", "EAPP-TC-005"],
         },
         "operator-request-list": {
           api: ["GET /operator/requests"],
@@ -1020,6 +1098,60 @@ MVP 요청 유형은 ASSET_REQUEST, VISITOR_REQUEST, FACILITY_REQUEST다.</texta
           policy: ["ROLE_ADMIN", "IP/User-Agent 저장 가능", "비밀번호 제외"],
           test: ["AUDIT-TC-006", "AUDIT-TC-007", "PERM-TC-005"],
         },
+        "hr-attendance-dashboard": {
+          api: ["GET /hr/attendance/summary", "GET /hr/attendance/reports"],
+          actions: ["부서 근태 집계", "누락 기록 확인", "월간 리포트"],
+          policy: ["ROLE_HR/ADMIN", "팀장은 소속 팀만"],
+          test: ["ATT-TC-008", "ATT-TC-009"],
+        },
+        "hr-leave-management": {
+          api: ["GET /hr/leaves", "POST /hr/leaves/{userId}/adjustments"],
+          actions: ["사용자별 연차 조회", "연차 조정", "조정 이력 확인"],
+          policy: ["ROLE_HR/ADMIN", "leave_usages ADJUST 저장"],
+          test: ["ATT-TC-001", "AUDIT-TC-006"],
+        },
+        "hr-certificate-list": {
+          api: ["GET /hr/certificates", "PATCH /hr/certificates/{id}/complete"],
+          actions: ["증명서 신청 확인", "발급 완료 처리"],
+          policy: ["재직/경력증명서", "processed_by/processed_at 저장"],
+          test: ["EAPP-TC-008"],
+        },
+        "hr-eapproval-list": {
+          api: ["GET /hr/e-approvals", "PATCH /hr/e-approvals/{id}/approve", "PATCH /hr/e-approvals/{id}/reject"],
+          actions: ["HR 최종 승인", "HR 반려", "연차 차감/복원"],
+          policy: ["연차/근태/증명서 문서 처리", "leave_balances 연동"],
+          test: ["EAPP-TC-006", "ATT-TC-003", "ATT-TC-004"],
+        },
+        "finance-eapproval-list": {
+          api: ["GET /finance/e-approvals"],
+          actions: ["재무 결재 조회", "비용 문서 상세 이동"],
+          policy: ["지출/법인카드 문서만 처리"],
+          test: ["EAPP-TC-007"],
+        },
+        "finance-expense-list": {
+          api: ["GET /finance/expenses", "PATCH /finance/expenses/{id}/process"],
+          actions: ["지출 처리", "법인카드 처리", "처리 코멘트 저장"],
+          policy: ["processed_by/processed_at 저장"],
+          test: ["EAPP-TC-009"],
+        },
+        "admin-approval-list": {
+          api: ["GET /admin/approvals"],
+          actions: ["전체 결재 조회", "상태/문서 유형 필터"],
+          policy: ["ROLE_ADMIN", "전체 전자결재 관리"],
+          test: ["PERM-TC-005"],
+        },
+        "admin-approval-form-list": {
+          api: ["GET /admin/approval-forms", "POST /admin/approval-forms"],
+          actions: ["양식 조회", "양식 등록"],
+          policy: ["문서 유형별 입력값 기준 관리"],
+          test: ["CODE-TC-001"],
+        },
+        "admin-attendance-policy": {
+          api: ["GET /admin/attendance-policies", "POST /admin/attendance-policies"],
+          actions: ["연차 단위", "근무 유형", "휴게 기준 관리"],
+          policy: ["ROLE_ADMIN", "HR 정책 기준"],
+          test: ["ATT-TC-009"],
+        },
       };
 
       const links = [
@@ -1034,6 +1166,14 @@ MVP 요청 유형은 ASSET_REQUEST, VISITOR_REQUEST, FACILITY_REQUEST다.</texta
         ["admin-dashboard", "admin-asset-list"], ["admin-dashboard", "admin-reservation-list"], ["admin-dashboard", "admin-resource-list"],
         ["admin-dashboard", "admin-user-list"], ["admin-user-list", "admin-user-detail"], ["admin-user-detail", "admin-audit-log-list"],
         ["user-home", "user-me"], ["user-me", "user-password"], ["user-home", "user-notification-list"],
+        ["user-home", "user-attendance-home"], ["user-attendance-home", "user-leave-balance"], ["user-attendance-home", "user-attendance-records"],
+        ["user-home", "user-approval-list"], ["user-approval-list", "user-approval-create"], ["user-approval-create", "user-approval-detail"],
+        ["user-approval-detail", "manager-eapproval-list"], ["manager-eapproval-list", "manager-eapproval-detail"],
+        ["manager-eapproval-detail", "hr-eapproval-list"], ["manager-eapproval-detail", "finance-eapproval-list"],
+        ["hr-attendance-dashboard", "hr-leave-management"], ["hr-attendance-dashboard", "hr-certificate-list"], ["hr-attendance-dashboard", "hr-eapproval-list"],
+        ["hr-eapproval-list", "hr-leave-management"], ["hr-eapproval-list", "hr-certificate-list"],
+        ["finance-eapproval-list", "finance-expense-list"], ["finance-expense-list", "admin-approval-list"],
+        ["admin-dashboard", "admin-approval-list"], ["admin-approval-list", "admin-approval-form-list"], ["admin-approval-form-list", "admin-attendance-policy"],
         ["common-forbidden", "auth-login"], ["common-not-found", "auth-login"],
       ];
 
@@ -1042,6 +1182,8 @@ MVP 요청 유형은 ASSET_REQUEST, VISITOR_REQUEST, FACILITY_REQUEST다.</texta
         { title: "User", hint: "직원 공통", x: 420, y: 62 },
         { title: "Manager", hint: "1차 승인", x: 1060, y: 535 },
         { title: "Operator", hint: "최종 승인/처리", x: 1700, y: 295 },
+        { title: "HR", hint: "근태/증명서", x: 2020, y: 1495 },
+        { title: "Finance", hint: "비용 결재", x: 2340, y: 1735 },
         { title: "Admin", hint: "전체 운영 관리", x: 2020, y: 62 },
       ];
 
@@ -1051,6 +1193,8 @@ MVP 요청 유형은 ASSET_REQUEST, VISITOR_REQUEST, FACILITY_REQUEST다.</texta
         User: "accent-blue",
         Manager: "accent-green",
         Operator: "accent-violet",
+        HR: "accent-teal",
+        Finance: "accent-amber",
         Admin: "accent-red",
       };
 
@@ -1060,6 +1204,8 @@ MVP 요청 유형은 ASSET_REQUEST, VISITOR_REQUEST, FACILITY_REQUEST다.</texta
         User: "User",
         Manager: "Mgr",
         Operator: "Ops",
+        HR: "HR",
+        Finance: "Fin",
         Admin: "Admin",
       };
 

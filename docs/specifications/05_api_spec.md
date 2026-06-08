@@ -748,7 +748,240 @@ Query:
 }
 ```
 
-## 14. MVP 이후 API
+## 14. 근태/연차 API
+
+### 14.1 내 근태 요약
+
+```text
+GET /attendance/me/summary
+권한: 로그인 사용자
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "workDate": "2026-06-08",
+    "attendanceStatus": "CHECKED_IN",
+    "checkInAt": "2026-06-08T09:02:00",
+    "checkOutAt": null,
+    "monthlyWorkMinutes": 6240,
+    "remainingLeaveDays": 9.5
+  }
+}
+```
+
+### 14.2 출근/퇴근 기록
+
+```text
+POST /attendance/records/check-in
+POST /attendance/records/check-out
+권한: 로그인 사용자
+```
+
+Request:
+
+```json
+{
+  "workType": "OFFICE"
+}
+```
+
+처리 규칙:
+
+- 중복 출근, 중복 퇴근은 `ATTENDANCE_INVALID_STATUS`를 반환한다.
+- 퇴근 시 총 근무시간과 초과근무 시간을 계산해 저장한다.
+
+### 14.3 내 출퇴근 기록 조회
+
+```text
+GET /attendance/records/me
+권한: 로그인 사용자
+```
+
+Query:
+
+| 이름 | 설명 |
+| --- | --- |
+| month | `YYYY-MM` |
+| status | 근태 상태 |
+
+### 14.4 내 연차 현황 조회
+
+```text
+GET /attendance/leaves/me
+권한: 로그인 사용자
+```
+
+### 14.5 내 연차 사용 내역 조회
+
+```text
+GET /attendance/leaves/me/usages
+권한: 로그인 사용자
+```
+
+Query:
+
+| 이름 | 설명 |
+| --- | --- |
+| year | 기준 연도 |
+| usageType | GRANT, USE, CANCEL_RESTORE, ADJUST, EXPIRE |
+
+### 14.6 HR 근태 현황/리포트
+
+```text
+GET /hr/attendance/summary
+GET /hr/attendance/reports
+권한: ROLE_HR, ROLE_ADMIN
+```
+
+Query:
+
+| 이름 | 설명 |
+| --- | --- |
+| departmentId | 부서 ID |
+| userId | 사용자 ID |
+| month | 기준 월 |
+
+### 14.7 HR 연차 관리
+
+```text
+GET  /hr/leaves
+POST /hr/leaves/{userId}/adjustments
+권한: ROLE_HR, ROLE_ADMIN
+```
+
+Adjustment Request:
+
+```json
+{
+  "year": 2026,
+  "amountDays": 1.0,
+  "reason": "입사일 기준 연차 조정"
+}
+```
+
+## 15. 전자결재 API
+
+### 15.1 전자결재 문서 목록
+
+```text
+GET /approvals
+권한: 로그인 사용자
+```
+
+Query:
+
+| 이름 | 설명 |
+| --- | --- |
+| documentType | 문서 유형 |
+| status | 결재 상태 |
+| keyword | 제목/본문 |
+| page | 페이지 |
+| size | 크기 |
+
+### 15.2 전자결재 문서 작성/상신/취소
+
+```text
+POST  /approvals
+GET   /approvals/{id}
+PATCH /approvals/{id}
+POST  /approvals/{id}/submit
+PATCH /approvals/{id}/cancel
+권한: 작성자, 결재자, 참조자, ROLE_ADMIN
+```
+
+Create Request:
+
+```json
+{
+  "documentType": "LEAVE_REQUEST",
+  "title": "연차 신청서",
+  "content": "개인 일정으로 연차 신청합니다.",
+  "detailPayload": {
+    "leaveType": "ANNUAL",
+    "startAt": "2026-06-15T09:00:00",
+    "endAt": "2026-06-15T18:00:00",
+    "amountDays": 1.0,
+    "handoverMemo": "진행 업무는 팀 문서에 정리했습니다."
+  },
+  "referenceUserIds": [8, 9]
+}
+```
+
+처리 규칙:
+
+- `DRAFT` 문서는 작성자만 수정할 수 있다.
+- 상신 시 팀장 단계와 문서 유형별 최종 처리 단계를 생성한다.
+- 연차 신청 상신 시 잔여 연차 부족 여부를 검증한다.
+
+### 15.3 팀장 전자결재 승인/반려
+
+```text
+GET   /manager/e-approvals
+GET   /manager/e-approvals/{id}
+PATCH /manager/e-approvals/{id}/approve
+PATCH /manager/e-approvals/{id}/reject
+권한: ROLE_MANAGER, ROLE_ADMIN
+```
+
+Reject Request:
+
+```json
+{
+  "comment": "일정 재조정이 필요합니다."
+}
+```
+
+### 15.4 HR 전자결재 처리
+
+```text
+GET   /hr/e-approvals
+PATCH /hr/e-approvals/{id}/approve
+PATCH /hr/e-approvals/{id}/reject
+GET   /hr/certificates
+PATCH /hr/certificates/{id}/complete
+권한: ROLE_HR, ROLE_ADMIN
+```
+
+처리 규칙:
+
+- 연차 신청 승인 완료 시 `leave_usages`를 생성하고 `leave_balances`를 차감한다.
+- 연차 취소 신청 승인 완료 시 원본 사용 이력을 취소 처리하고 잔여 연차를 복원한다.
+- 증명서 신청 완료 시 `certificate_requests.processed_by`, `processed_at`을 저장한다.
+
+### 15.5 재무 전자결재/비용 처리
+
+```text
+GET   /finance/e-approvals
+GET   /finance/expenses
+PATCH /finance/expenses/{id}/process
+권한: ROLE_FINANCE, ROLE_ADMIN
+```
+
+Process Request:
+
+```json
+{
+  "processStatus": "PROCESSED",
+  "comment": "6월 비용 정산 반영 완료"
+}
+```
+
+### 15.6 관리자 전자결재/양식/근태 정책
+
+```text
+GET  /admin/approvals
+GET  /admin/approval-forms
+POST /admin/approval-forms
+GET  /admin/attendance-policies
+POST /admin/attendance-policies
+권한: ROLE_ADMIN
+```
+
+## 16. MVP 이후 API
 
 ```text
 POST   /requests/{id}/attachments
@@ -762,7 +995,7 @@ GET    /admin/operation-days
 POST   /admin/operation-days
 ```
 
-## 15. 주요 에러 코드
+## 17. 주요 에러 코드
 
 | 코드 | 설명 |
 | --- | --- |
@@ -774,6 +1007,14 @@ POST   /admin/operation-days
 | REQUEST_INVALID_STATUS | 잘못된 요청 상태 변경 |
 | REQUEST_NOT_ASSIGNEE | 요청 담당자가 아님 |
 | APPROVAL_NOT_ALLOWED | 승인 권한 없음 |
+| APPROVAL_DOCUMENT_NOT_FOUND | 전자결재 문서를 찾을 수 없음 |
+| APPROVAL_INVALID_STATUS | 잘못된 전자결재 상태 변경 |
+| APPROVAL_STEP_NOT_ASSIGNED | 현재 결재 차례가 아님 |
+| ATTENDANCE_INVALID_STATUS | 잘못된 출퇴근 상태 변경 |
+| LEAVE_BALANCE_NOT_ENOUGH | 잔여 연차 부족 |
+| LEAVE_USAGE_NOT_FOUND | 연차 사용 이력을 찾을 수 없음 |
+| CERTIFICATE_REQUEST_NOT_FOUND | 증명서 신청을 찾을 수 없음 |
+| EXPENSE_REPORT_NOT_FOUND | 지출결의서를 찾을 수 없음 |
 | RESERVATION_CONFLICT | 예약 시간이 중복됨 |
 | ASSET_NOT_AVAILABLE | 자산을 사용할 수 없음 |
 | VALIDATION_ERROR | 입력값 검증 실패 |

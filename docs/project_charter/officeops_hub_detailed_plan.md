@@ -2,9 +2,9 @@
 
 ## 1. 프로젝트 개요
 
-`OfficeOps Hub`는 회사 내부에서 발생하는 비품 요청, 회의실 예약, 방문 신청, 자산 대여/반납 업무를 일반 직원, 팀장, 운영 담당자, 관리자가 한곳에서 처리할 수 있는 사내 운영 관리 플랫폼이다.
+`OfficeOps Hub`는 회사 내부에서 발생하는 비품 요청, 회의실 예약, 방문 신청, 자산 대여/반납, 근태 관리, 전자결재 업무를 일반 직원, 팀장, 운영 담당자, HR 담당자, 재무 담당자, 관리자가 한곳에서 처리할 수 있는 사내 운영/HR 관리 플랫폼이다.
 
-직원은 필요한 요청을 등록하고 진행 상태를 확인할 수 있으며, 팀장은 소속 팀원의 요청을 1차 승인하거나 반려한다. 운영 담당자는 팀장 승인 완료 요청을 최종 승인하고 담당자와 마감일을 지정하며, 관리자는 전체 요청과 운영 현황을 관리한다. 모든 상태 변경은 이력으로 저장되어 요청 처리 과정을 추적할 수 있다.
+직원은 필요한 요청, 예약, 근태 신청, 전자결재 문서를 등록하고 진행 상태를 확인할 수 있으며, 팀장은 소속 팀원의 요청과 전자결재 문서를 1차 승인하거나 반려한다. 운영 담당자는 팀장 승인 완료 운영 요청을 최종 승인하고 담당자와 마감일을 지정하며, HR 담당자는 연차/근태/증명서 업무를, 재무 담당자는 지출/법인카드 문서를 처리한다. 관리자는 전체 요청과 운영/HR 현황을 관리한다. 모든 상태 변경은 이력으로 저장되어 처리 과정을 추적할 수 있다.
 
 이 프로젝트는 단순 게시판형 CRUD를 넘어 실제 업무 시스템에서 필요한 권한 관리, 상태 전이, 예약 충돌 방지, 자산 상태 관리, 검색/필터, 대시보드 기능을 포함하는 것을 목표로 한다.
 
@@ -49,7 +49,7 @@
 MVP 핵심 문장은 다음과 같다.
 
 ```text
-비품 요청 + 회의실 예약 + 팀장 1차 승인 + 운영 담당자 최종 승인 + 자산 상태 관리 + 처리 이력 + 대시보드
+비품 요청 + 회의실 예약 + 팀장 1차 승인 + 운영 담당자 최종 승인 + 자산 상태 관리 + 근태/연차 관리 + 전자결재 + 처리 이력 + 대시보드
 ```
 
 ## 4. 주요 사용자
@@ -59,9 +59,11 @@ MVP 핵심 문장은 다음과 같다.
 | 일반 직원 | ROLE_USER | 사내 요청과 예약을 등록하는 사용자 | 요청 등록, 내 요청 조회, 예약 신청, 요청 취소, 자산 조회 |
 | 팀장 | ROLE_MANAGER | 소속 팀원의 요청을 1차 검토하는 사용자 | 팀 승인 요청 조회, 1차 승인/반려 |
 | 운영 담당자 | ROLE_OPERATOR | 자산, 시설, 예약 관련 요청을 최종 처리하는 사용자 | 최종 승인/반려, 담당자 지정, 마감일 관리, 처리 중/완료 |
+| HR 담당자 | ROLE_HR | 근태, 연차, 증명서를 관리하는 사용자 | 연차 조정, 근태 리포트, 증명서 처리, HR 결재 |
+| 재무 담당자 | ROLE_FINANCE | 비용 결재와 정산 문서를 처리하는 사용자 | 지출결의서 검토, 법인카드 사용내역 처리 |
 | 관리자 | ROLE_ADMIN | 전체 운영을 총괄하는 사용자 | 전체 요청, 예약, 자산, 사용자, 자원, 감사 이력 관리 |
 
-MVP에서는 위 4개 권한을 기준으로 화면 접근과 API 접근을 분리한다.
+MVP 확장 범위에서는 위 6개 권한을 기준으로 화면 접근과 API 접근을 분리한다.
 
 ## 5. 주요 기능 범위
 
@@ -1149,4 +1151,143 @@ GET    /api/requests/{id}/comments
 POST   /api/requests/{id}/comments
 GET    /api/notifications
 PATCH  /api/notifications/{id}/read
+```
+
+## 30. HR/전자결재 확장 상세 기획
+
+### 30.1 확장 배경
+
+실제 사내 운영 시스템은 비품/예약/자산 요청뿐 아니라 연차, 출퇴근, 근무제 신청, 지출결의서, 증명서 발급 같은 HR/전자결재 업무와 함께 운영된다. OfficeOps Hub는 기존 운영 관리 기능을 유지하면서 HR 포털과 전자결재 기능을 통합해 사내 업무 요청의 단일 진입점을 제공한다.
+
+참고한 운영 패턴:
+
+- HR/근태 서비스는 연차 발생/잔여일수, 출퇴근 기록, 근무시간 집계, 팀/부서 리포트를 제공한다.
+- 전자결재 서비스는 문서 작성, 임시저장, 상신, 결재선 승인/반려, 완료 이력을 관리한다.
+- 연차 신청은 전자결재 승인 완료 시 연차 잔여일수와 자동 연동된다.
+- 지출결의서와 법인카드 사용내역서는 팀장 승인 후 재무 담당자가 최종 확인한다.
+
+### 30.2 근태 기능 범위
+
+| 기능 | 주요 내용 | 우선순위 |
+| --- | --- | --- |
+| 내 연차 현황 | 발생, 사용, 예정 차감, 잔여, 만료 예정 연차 조회 | 필수 |
+| 연차 사용 내역 | 발생, 사용, 취소 복원, HR 조정 이력 조회 | 필수 |
+| 출근/퇴근 기록 | 출근, 퇴근, 휴게, 총 근무시간, 초과근무 시간 기록 | 필수 |
+| 근무제 신청 | 재택, 외근, 출장, 시차출퇴근, 초과근무 신청 | 필수 |
+| 팀 근태 현황 | 팀장이 소속 팀원 근태와 휴가 예정 확인 | 필수 |
+| HR 근태 리포트 | 부서별 근무시간, 누락 기록, 연차 사용 집계 | 필수 |
+| 근태 정책 관리 | 연차 단위, 근무 유형, 시간차 단위, 휴게 기준 관리 | 필수 |
+
+### 30.3 전자결재 문서 유형
+
+| 문서 유형 | 코드 | 최종 담당 | 주요 입력값 |
+| --- | --- | --- | --- |
+| 연차 신청서 | LEAVE_REQUEST | ROLE_HR | 휴가 유형, 시작/종료, 사용 일수, 사유 |
+| 연차 취소 신청서 | LEAVE_CANCEL_REQUEST | ROLE_HR | 원본 문서, 취소 사유 |
+| 재택근무 신청서 | REMOTE_WORK_REQUEST | ROLE_HR | 근무일, 장소, 사유 |
+| 외근 신청서 | OUT_OF_OFFICE_REQUEST | ROLE_HR | 외근 일시, 장소, 목적 |
+| 출장 신청서 | BUSINESS_TRIP_REQUEST | ROLE_HR | 출장 기간, 장소, 목적 |
+| 시차출퇴근 신청서 | STAGGERED_WORK_REQUEST | ROLE_HR | 희망 출퇴근 시간, 적용 기간 |
+| 초과근무 신청서 | OVERTIME_REQUEST | ROLE_HR | 예상 시간, 업무 내용, 사유 |
+| 지출결의서 | EXPENSE_REPORT | ROLE_FINANCE | 사용일, 금액, 거래처, 비용 항목, 목적 |
+| 법인카드 사용내역서 | CORPORATE_CARD_REPORT | ROLE_FINANCE | 카드, 사용일시, 가맹점, 금액, 목적 |
+| 재직증명서 신청서 | EMPLOYMENT_CERTIFICATE | ROLE_HR | 제출처, 용도, 언어, 부수 |
+| 경력증명서 신청서 | CAREER_CERTIFICATE | ROLE_HR | 제출처, 용도, 언어, 부수 |
+
+### 30.4 전자결재 기본 흐름
+
+```text
+작성자 문서 작성
+-> 임시저장 또는 상신
+-> 팀장 1차 승인/반려
+-> 문서 유형별 HR/Finance 담당자 최종 승인/반려
+-> 후속 처리
+   - 연차: leave_usages 생성, leave_balances 차감/복원
+   - 증명서: 발급 완료 처리
+   - 비용: 재무 처리 완료
+-> 결재 이력, 알림, 감사 이력 저장
+```
+
+### 30.5 추가 화면 구조
+
+```text
+사용자:
+/user/attendance
+/user/attendance/leaves
+/user/attendance/records
+/user/approvals
+/user/approvals/new
+/user/approvals/:id
+
+팀장:
+/manager/e-approvals
+/manager/e-approvals/:id
+
+HR:
+/hr/attendance
+/hr/leaves
+/hr/certificates
+/hr/e-approvals
+
+재무:
+/finance/e-approvals
+/finance/expenses
+
+관리자:
+/admin/approvals
+/admin/approval-forms
+/admin/attendance-policies
+```
+
+### 30.6 추가 데이터 설계
+
+| 테이블 | 역할 |
+| --- | --- |
+| attendance_records | 출근, 퇴근, 휴게, 근무시간 기록 |
+| leave_balances | 사용자별 연차 발생/사용/잔여 현황 |
+| leave_usages | 연차 발생, 사용, 복원, 조정 이력 |
+| approval_documents | 전자결재 문서 공통 본문 |
+| approval_steps | 결재선 단계 |
+| approval_histories | 결재 승인/반려/상태 변경 이력 |
+| expense_reports | 지출결의서 상세 |
+| corporate_card_usages | 법인카드 사용내역서 상세 |
+| certificate_requests | 재직/경력증명서 신청 상세 |
+
+### 30.7 추가 API 후보
+
+```text
+근태:
+GET   /api/attendance/me/summary
+POST  /api/attendance/records/check-in
+POST  /api/attendance/records/check-out
+GET   /api/attendance/records/me
+GET   /api/attendance/leaves/me
+GET   /api/attendance/leaves/me/usages
+
+전자결재:
+GET   /api/approvals
+POST  /api/approvals
+GET   /api/approvals/{id}
+PATCH /api/approvals/{id}
+POST  /api/approvals/{id}/submit
+PATCH /api/approvals/{id}/cancel
+
+팀장:
+GET   /api/manager/e-approvals
+PATCH /api/manager/e-approvals/{id}/approve
+PATCH /api/manager/e-approvals/{id}/reject
+
+HR:
+GET   /api/hr/attendance/summary
+GET   /api/hr/attendance/reports
+GET   /api/hr/leaves
+POST  /api/hr/leaves/{userId}/adjustments
+GET   /api/hr/certificates
+PATCH /api/hr/certificates/{id}/complete
+GET   /api/hr/e-approvals
+
+재무:
+GET   /api/finance/e-approvals
+GET   /api/finance/expenses
+PATCH /api/finance/expenses/{id}/process
 ```

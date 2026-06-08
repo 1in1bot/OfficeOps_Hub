@@ -13,6 +13,8 @@
 | 일반 직원 | ROLE_USER | 요청 등록자, 예약자 |
 | 팀장 | ROLE_MANAGER | 소속 팀원의 요청 1차 승인자 |
 | 운영 담당자 | ROLE_OPERATOR | 요청 최종 승인자, 자산/예약 운영 담당자 |
+| HR 담당자 | ROLE_HR | 연차/근태 정책, 근태 현황, 증명서 처리 담당자 |
+| 재무 담당자 | ROLE_FINANCE | 지출결의서, 법인카드 사용내역서 처리 담당자 |
 | 관리자 | ROLE_ADMIN | 전체 운영 총괄 |
 
 ## 3. 사용자 상태 정책
@@ -199,6 +201,78 @@ AND
 | 사용자 관리 | 불가 | 불가 | 불가 | 가능 |
 | 감사 이력 조회 | 불가 | 불가 | 불가 | 가능 |
 
+## 9.1 HR/전자결재 권한 정책
+
+| 기능 | ROLE_USER | ROLE_MANAGER | ROLE_OPERATOR | ROLE_HR | ROLE_FINANCE | ROLE_ADMIN |
+| --- | --- | --- | --- | --- | --- | --- |
+| 내 근태/연차 조회 | 본인 | 본인 | 본인 | 본인 | 본인 | 가능 |
+| 출근/퇴근 기록 | 본인 | 본인 | 본인 | 본인 | 본인 | 가능 |
+| 팀 근태 현황 | 불가 | 소속 팀 | 불가 | 전체 | 불가 | 전체 |
+| 연차 조정 | 불가 | 불가 | 불가 | 가능 | 불가 | 가능 |
+| 전자결재 작성 | 가능 | 가능 | 가능 | 가능 | 가능 | 가능 |
+| 내 전자결재 조회 | 본인/참조 | 본인/참조 | 본인/참조 | 본인/참조 | 본인/참조 | 전체 |
+| 팀 전자결재 승인 | 불가 | 소속 팀 | 불가 | 불가 | 불가 | 가능 |
+| HR 전자결재 처리 | 불가 | 불가 | 불가 | 가능 | 불가 | 가능 |
+| 재무 전자결재 처리 | 불가 | 불가 | 불가 | 불가 | 가능 | 가능 |
+| 증명서 발급 처리 | 불가 | 불가 | 불가 | 가능 | 불가 | 가능 |
+| 전자결재 양식 관리 | 불가 | 불가 | 불가 | 불가 | 불가 | 가능 |
+| 근태 정책 관리 | 불가 | 불가 | 불가 | 가능 | 불가 | 가능 |
+
+## 9.2 전자결재 상태 정책
+
+| 상태 | 설명 |
+| --- | --- |
+| DRAFT | 임시저장 |
+| SUBMITTED | 상신 완료 |
+| PENDING_MANAGER_APPROVAL | 팀장 승인 대기 |
+| PENDING_FINAL_APPROVAL | HR/재무/관리자 최종 확인 대기 |
+| APPROVED | 최종 승인 |
+| REJECTED | 반려 |
+| COMPLETED | 후속 처리 완료 |
+| CANCEL_REQUESTED | 취소 요청 |
+| CANCELLED | 취소 완료 |
+
+상태 전이:
+
+| 현재 상태 | 변경 상태 | 가능 주체 |
+| --- | --- | --- |
+| DRAFT | SUBMITTED | 작성자 |
+| SUBMITTED | PENDING_MANAGER_APPROVAL | 시스템 |
+| PENDING_MANAGER_APPROVAL | PENDING_FINAL_APPROVAL | 팀장, 관리자 |
+| PENDING_MANAGER_APPROVAL | REJECTED | 팀장, 관리자 |
+| PENDING_FINAL_APPROVAL | APPROVED | HR/재무/관리자 담당자 |
+| PENDING_FINAL_APPROVAL | REJECTED | HR/재무/관리자 담당자 |
+| APPROVED | COMPLETED | HR/재무/관리자 담당자, 시스템 |
+| APPROVED | CANCEL_REQUESTED | 작성자 |
+| CANCEL_REQUESTED | CANCELLED | HR/재무/관리자 담당자 |
+
+정책:
+
+- 작성자는 `DRAFT` 상태 문서만 수정할 수 있다.
+- 상신 이후 본문 수정은 불가하며, 필요 시 취소 후 재작성한다.
+- 반려 시 반려 사유는 필수다.
+- 문서 유형이 HR 도메인이면 최종 단계는 `ROLE_HR`, 비용 도메인이면 `ROLE_FINANCE`로 생성한다.
+- 연차 신청 최종 승인 시 연차 잔여일수를 차감한다.
+- 연차 취소 신청 최종 승인 시 원본 연차 사용 이력을 취소하고 잔여일수를 복원한다.
+- 결재 단계와 상태 변경은 `approval_histories`에 저장한다.
+
+## 9.3 근태 상태 정책
+
+| 상태 | 설명 |
+| --- | --- |
+| NOT_CHECKED_IN | 출근 전 |
+| CHECKED_IN | 출근 상태 |
+| ON_BREAK | 휴게 중 |
+| CHECKED_OUT | 퇴근 완료 |
+| CORRECTED | HR 또는 관리자 보정 |
+
+정책:
+
+- 사용자는 하루에 하나의 근태 기록을 가진다.
+- `CHECKED_OUT` 이후 사용자는 직접 수정할 수 없으며, HR 담당자 또는 관리자가 보정한다.
+- 팀장은 소속 팀원의 근태 현황만 조회한다.
+- HR 담당자와 관리자는 전체 부서 또는 특정 부서 근태 현황을 조회한다.
+
 ## 10. 화면 접근 정책
 
 | 경로 | 접근 권한 |
@@ -207,12 +281,17 @@ AND
 | `/user/*` | 로그인 사용자 |
 | `/manager/*` | ROLE_MANAGER, ROLE_ADMIN |
 | `/operator/*` | ROLE_OPERATOR, ROLE_ADMIN |
+| `/hr/*` | ROLE_HR, ROLE_ADMIN |
+| `/finance/*` | ROLE_FINANCE, ROLE_ADMIN |
 | `/admin/dashboard` | ROLE_ADMIN |
 | `/admin/requests/*` | ROLE_OPERATOR, ROLE_ADMIN |
 | `/admin/assets/*` | ROLE_OPERATOR, ROLE_ADMIN |
 | `/admin/reservations/*` | ROLE_OPERATOR, ROLE_ADMIN |
 | `/admin/resources/*` | ROLE_ADMIN |
 | `/admin/users/*` | ROLE_ADMIN |
+| `/admin/approvals/*` | ROLE_ADMIN |
+| `/admin/approval-forms/*` | ROLE_ADMIN |
+| `/admin/attendance-policies/*` | ROLE_ADMIN |
 | `/admin/audit-logs` | ROLE_ADMIN |
 
 ## 11. 데이터 접근 정책
@@ -229,6 +308,11 @@ AND
 
 - 팀장 승인/반려
 - 운영 담당자 최종 승인/반려
+- 전자결재 승인/반려/완료/취소
+- HR 연차 조정
+- HR 증명서 발급 완료 처리
+- 재무 지출결의서/법인카드 사용내역 처리
+- 출퇴근 기록 보정
 - 담당자 지정/변경
 - 처리 예정일/마감일 변경
 - 사용자 비활성화/활성화
@@ -252,6 +336,8 @@ AND
 - 요청 관련 알림은 `target_type = REQUEST`를 사용한다.
 - 예약 관련 알림은 `target_type = RESERVATION`을 사용한다.
 - 자산 관련 알림은 `target_type = ASSET` 또는 `ASSET_LOAN`을 사용한다.
+- 전자결재 관련 알림은 `target_type = APPROVAL_DOCUMENT`를 사용한다.
+- 출퇴근 보정처럼 전자결재 문서가 없는 근태 알림은 `target_type = ATTENDANCE_RECORD`를 사용한다.
 
 ## 14. 공통 코드 정책
 

@@ -331,6 +331,16 @@
         background: var(--violet-soft);
       }
 
+      .tag.hr {
+        color: #0f766e;
+        background: #ccfbf1;
+      }
+
+      .tag.finance {
+        color: #b45309;
+        background: #fef3c7;
+      }
+
       .tag.admin {
         color: var(--red);
         background: var(--red-soft);
@@ -537,7 +547,7 @@
           <div class="brand-mark">OH</div>
           <div>
             <h1>OfficeOps Hub UX/UI Flow</h1>
-            <p>사내 운영 관리 플랫폼 화면흐름도 프로토타입</p>
+            <p>사내 운영 + HR 근태 + 전자결재 플랫폼 화면흐름도 프로토타입</p>
           </div>
         </div>
         <nav class="flow-tabs" aria-label="흐름 필터">
@@ -545,6 +555,9 @@
           <button class="flow-tab" data-flow="request">요청 승인</button>
           <button class="flow-tab" data-flow="reservation">회의실 예약</button>
           <button class="flow-tab" data-flow="asset">자산 관리</button>
+          <button class="flow-tab" data-flow="attendance">근태</button>
+          <button class="flow-tab" data-flow="approval">전자결재</button>
+          <button class="flow-tab" data-flow="finance">재무</button>
           <button class="flow-tab" data-flow="admin">관리자</button>
         </nav>
       </header>
@@ -553,7 +566,7 @@
         <section class="summary-grid" aria-label="프로젝트 요약">
           <article class="summary-card hero">
             <h2>OfficeOps Hub</h2>
-            <p>비품 요청, 회의실 예약, 방문 신청, 자산 대여/반납을 하나의 운영 흐름으로 묶은 사내 관리 시스템</p>
+            <p>비품 요청, 회의실 예약, 방문 신청, 자산 대여/반납, 근태, 전자결재를 하나의 흐름으로 묶은 사내 운영/HR 관리 시스템</p>
           </article>
           <article class="summary-card">
             <h3>핵심 상태</h3>
@@ -562,18 +575,18 @@
           </article>
           <article class="summary-card">
             <h3>역할</h3>
-            <div class="metric">4</div>
-            <p>직원, 팀장, 운영, 관리자</p>
+            <div class="metric">6</div>
+            <p>직원, 팀장, 운영, HR, 재무, 관리자</p>
           </article>
           <article class="summary-card">
             <h3>MVP 화면</h3>
-            <div class="metric">24</div>
-            <p>필수 구현 기준</p>
+            <div class="metric">40+</div>
+            <p>운영/근태/전자결재 기준</p>
           </article>
           <article class="summary-card">
             <h3>핵심 플로우</h3>
-            <div class="metric">1</div>
-            <p>요청 승인/처리 중심</p>
+            <div class="metric">3</div>
+            <p>요청, 근태, 전자결재</p>
           </article>
         </section>
 
@@ -722,6 +735,50 @@
                   <div class="line"><span></span><span></span><span></span></div>
                 </div>
               </article>
+
+              <article class="screen" data-flow="all attendance approval" data-next="→">
+                <div class="screen-head">
+                  <div>
+                    <h2 class="screen-title">내 근태 / 연차</h2>
+                    <div class="route">/user/attendance, /user/attendance/leaves</div>
+                  </div>
+                  <span class="tag user">ATT</span>
+                </div>
+                <div class="dashboard-grid">
+                  <div class="mini-card"></div>
+                  <div class="mini-card"></div>
+                  <div class="mini-card"></div>
+                  <div class="mini-card"></div>
+                </div>
+                <div class="status-chain">
+                  <span class="status-pill">잔여 연차</span>
+                  <span class="status-pill">출퇴근</span>
+                  <span class="status-pill">근무시간</span>
+                </div>
+              </article>
+
+              <article class="screen" data-flow="all approval attendance finance" data-next="→">
+                <div class="screen-head">
+                  <div>
+                    <h2 class="screen-title">전자결재 작성 / 상세</h2>
+                    <div class="route">/user/approvals/new, /user/approvals/:id</div>
+                  </div>
+                  <span class="tag user">E-APP</span>
+                </div>
+                <div class="mini-ui">
+                  <div class="field"></div>
+                  <div class="field"></div>
+                  <div class="field short"></div>
+                  <div class="button-row">
+                    <div class="mini-button"></div>
+                    <div class="mini-button light"></div>
+                  </div>
+                </div>
+                <div class="status-chain">
+                  <span class="status-pill">DRAFT</span>
+                  <span class="status-pill">SUBMIT</span>
+                </div>
+              </article>
             </div>
 
             <div class="lane">
@@ -761,6 +818,25 @@
                 <div class="status-chain">
                   <span class="status-pill">PENDING_MANAGER</span>
                   <span class="status-pill">REJECTED</span>
+                </div>
+              </article>
+
+              <article class="screen primary" data-flow="all approval attendance finance" data-next="→">
+                <div class="screen-head">
+                  <div>
+                    <h2 class="screen-title">팀 전자결재함</h2>
+                    <div class="route">/manager/e-approvals, /manager/e-approvals/:id</div>
+                  </div>
+                  <span class="tag manager">E-APP</span>
+                </div>
+                <div class="list-lines">
+                  <div class="line"><span></span><span></span><span></span></div>
+                  <div class="line"><span></span><span></span><span></span></div>
+                  <div class="line"><span></span><span></span><span></span></div>
+                </div>
+                <div class="status-chain">
+                  <span class="status-pill">1차 승인</span>
+                  <span class="status-pill">반려</span>
                 </div>
               </article>
             </div>
@@ -819,6 +895,84 @@
                 </div>
                 <div class="calendar">
                   <div class="day busy"></div><div class="day"></div><div class="day"></div><div class="day busy"></div><div class="day"></div>
+                </div>
+              </article>
+            </div>
+
+            <div class="lane">
+              <div class="lane-title"><strong>HR</strong><span>근태/증명서 처리</span></div>
+
+              <article class="screen primary" data-flow="all attendance approval" data-next="→">
+                <div class="screen-head">
+                  <div>
+                    <h2 class="screen-title">근태 대시보드 / 연차 관리</h2>
+                    <div class="route">/hr/attendance, /hr/leaves</div>
+                  </div>
+                  <span class="tag hr">HR</span>
+                </div>
+                <div class="dashboard-grid">
+                  <div class="mini-card"></div>
+                  <div class="mini-card"></div>
+                  <div class="mini-card"></div>
+                  <div class="mini-card"></div>
+                </div>
+                <div class="status-chain">
+                  <span class="status-pill">리포트</span>
+                  <span class="status-pill">연차 조정</span>
+                </div>
+              </article>
+
+              <article class="screen primary" data-flow="all approval attendance" data-next="→">
+                <div class="screen-head">
+                  <div>
+                    <h2 class="screen-title">HR 전자결재 / 증명서</h2>
+                    <div class="route">/hr/e-approvals, /hr/certificates</div>
+                  </div>
+                  <span class="tag hr">FINAL</span>
+                </div>
+                <div class="list-lines">
+                  <div class="line"><span></span><span></span><span></span></div>
+                  <div class="line"><span></span><span></span><span></span></div>
+                </div>
+                <div class="status-chain">
+                  <span class="status-pill">연차 차감</span>
+                  <span class="status-pill">증명서 완료</span>
+                </div>
+              </article>
+            </div>
+
+            <div class="lane">
+              <div class="lane-title"><strong>Finance</strong><span>비용 결재</span></div>
+
+              <article class="screen primary" data-flow="all finance approval" data-next="→">
+                <div class="screen-head">
+                  <div>
+                    <h2 class="screen-title">재무 전자결재함</h2>
+                    <div class="route">/finance/e-approvals</div>
+                  </div>
+                  <span class="tag finance">FIN</span>
+                </div>
+                <div class="list-lines">
+                  <div class="line"><span></span><span></span><span></span></div>
+                  <div class="line"><span></span><span></span><span></span></div>
+                </div>
+              </article>
+
+              <article class="screen primary" data-flow="all finance approval" data-next="→">
+                <div class="screen-head">
+                  <div>
+                    <h2 class="screen-title">지출/법인카드 처리</h2>
+                    <div class="route">/finance/expenses</div>
+                  </div>
+                  <span class="tag finance">EXP</span>
+                </div>
+                <div class="mini-ui">
+                  <div class="field"></div>
+                  <div class="field short"></div>
+                  <div class="button-row">
+                    <div class="mini-button"></div>
+                    <div class="mini-button light"></div>
+                  </div>
                 </div>
               </article>
             </div>
@@ -905,6 +1059,20 @@
                   <div class="line"><span></span><span></span><span></span></div>
                 </div>
               </article>
+
+              <article class="screen" data-flow="all admin approval attendance finance" data-next="↔">
+                <div class="screen-head">
+                  <div>
+                    <h2 class="screen-title">전자결재 / 근태 정책 관리</h2>
+                    <div class="route">/admin/approvals, /admin/approval-forms, /admin/attendance-policies</div>
+                  </div>
+                  <span class="tag admin">HR OPS</span>
+                </div>
+                <div class="list-lines">
+                  <div class="line"><span></span><span></span><span></span></div>
+                  <div class="line"><span></span><span></span><span></span></div>
+                </div>
+              </article>
             </div>
           </div>
         </section>
@@ -913,10 +1081,10 @@
           <article class="detail-panel">
             <h2>핵심 사용자 시나리오</h2>
             <ol class="step-list">
-              <li><b>1</b><span>직원이 요청 유형을 선택하고 상세 내용을 입력해 요청을 등록한다.</span></li>
-              <li><b>2</b><span>팀장이 소속 팀원의 요청을 확인하고 1차 승인 또는 반려한다.</span></li>
-              <li><b>3</b><span>운영 담당자가 최종 승인하며 담당자, 처리 예정일, 마감일을 지정한다.</span></li>
-              <li><b>4</b><span>담당자가 처리 중으로 변경한 뒤 완료 처리하고, 모든 상태 변경은 이력으로 남긴다.</span></li>
+              <li><b>1</b><span>직원이 운영 요청, 근태 신청, 전자결재 문서를 등록한다.</span></li>
+              <li><b>2</b><span>팀장이 소속 팀원의 요청과 결재 문서를 1차 승인 또는 반려한다.</span></li>
+              <li><b>3</b><span>운영/HR/재무 담당자가 문서 유형에 맞게 최종 승인하고 처리한다.</span></li>
+              <li><b>4</b><span>연차 차감, 비용 처리, 증명서 완료, 요청 완료 이력이 저장되고 알림이 생성된다.</span></li>
             </ol>
           </article>
 
@@ -926,6 +1094,8 @@
               <span class="legend-item"><i class="dot" style="background: var(--blue)"></i>사용자 화면</span>
               <span class="legend-item"><i class="dot" style="background: var(--green)"></i>팀장 승인</span>
               <span class="legend-item"><i class="dot" style="background: var(--violet)"></i>운영 처리</span>
+              <span class="legend-item"><i class="dot" style="background: #0f766e"></i>HR 근태/증명서</span>
+              <span class="legend-item"><i class="dot" style="background: #b45309"></i>재무 비용 처리</span>
               <span class="legend-item"><i class="dot" style="background: var(--red)"></i>관리자 관리</span>
               <span class="legend-item"><i class="dot" style="background: var(--amber)"></i>상태/분기</span>
             </div>
