@@ -10,6 +10,11 @@
 | v1.3.0 | 파일명 버전 최신화 규칙 반영 | 문서 파일명의 버전을 문서 내부 최신 버전과 동일하게 관리하도록 정리하고, 이후 수정 및 버전 상승 시 파일명과 참조 링크를 즉시 갱신하는 규칙 추가 | 최신 버전과 맞지 않는 파일명 버전 표기 제거 |
 | v1.4.0 | 문서별 독립 버전 관리 정책 반영 | 문서마다 실제 업데이트 여부를 기준으로 버전을 상승시키고, 수정된 문서의 파일명과 참조 링크만 함께 갱신하도록 규칙 정리 | 전체 문서 버전을 일괄로 맞춘다는 해석 제거 |
 | v1.5.0 | README 작성 가이드 명칭 반영 | 문서 목록의 README 작성 가이드 파일명과 링크를 `OfficeOps_hub_README작성가이드_v1.5.0.md` 기준으로 수정 | `읽어보기작성가이드` 파일명 참조 제거 |
+| v1.6.0 | 가이드/템플릿 산출물 정리 | 문서 목록에서 README 작성 가이드와 팀 프로젝트 기획안 템플릿 항목 제거 | `OfficeOps_hub_README작성가이드_v1.5.0.md`, `OfficeOps_hub_팀프로젝트기획서템플릿_v1.3.0.md` 산출물 제거 |
+| v1.7.0 | 로컬/원격 브랜치 생성 지침 반영 | 협업 방식 설명과 팀 운영 문서 링크를 `dev` 기준 브랜치/PR 규칙에 맞게 수정 | `develop` 기반 브랜치 작업 표현 제거 |
+| v1.8.0 | 원격 업로드 요청 처리 지침 반영 | 팀 운영 문서 링크를 원격 업로드 요청 처리 규칙이 포함된 버전으로 갱신 | 없음 |
+| v1.9.0 | 보조 도구 작업 흔적 비노출 지침 반영 | 프로젝트 개요서와 팀 운영 문서 링크를 보조 도구 작업 흔적 비노출 규칙이 반영된 버전으로 갱신 | 없음 |
+| v1.10.0 | 브랜치 생성 절차 보강 반영 | 프로젝트 개요서와 팀 운영 문서 링크를 브랜치 생성 절차가 보강된 버전으로 갱신 | 없음 |
 
 사내 비품 요청, 방문 신청, 시설 요청, 회의실 예약, 자산 대여/반납 업무를 통합 관리하는 팀 프로젝트 기반 사내 운영 관리 웹 애플리케이션입니다.
 
@@ -31,7 +36,7 @@
 | Frontend | React 화면, 라우팅 보호, 요청/예약/자산 화면, 관리자 대시보드 |
 | Common | 요구사항 정리, ERD, API 명세, GitHub Issues, README, 발표자료, 배포 |
 
-권장 협업 방식은 기능 단위 이슈 생성, `develop` 기반 브랜치 작업, PR 리뷰, 문서 선반영입니다.
+권장 협업 방식은 기능 단위 이슈 생성, `dev` 하위 브랜치 작업, `dev` 대상 PR 리뷰, 문서 선반영입니다.
 
 ## Features
 
@@ -130,9 +135,9 @@ OfficeOps_Hub
 
 | Document | Description |
 | --- | --- |
-| [Project Charter](./docs/project_charter/OfficeOps_hub_프로젝트개요서_v1.4.0.md) | 목표, 범위, 역할, 일정, 산출물을 포함한 공식 프로젝트 개요서 |
+| [Project Charter](./docs/project_charter/OfficeOps_hub_프로젝트개요서_v1.8.0.md) | 목표, 범위, 역할, 일정, 산출물을 포함한 공식 프로젝트 개요서 |
 | [Detailed Plan](./docs/project_charter/OfficeOps_hub_상세계획서_v1.3.0.md) | 상세 기능 범위와 설계 방향 |
-| [Team Charter](./docs/team_charter/OfficeOps_hub_팀운영문서_v1.4.0.md) | 개발 환경, 팀 협업 방식, Git/PR 규칙 |
+| [Team Charter](./docs/team_charter/OfficeOps_hub_팀운영문서_v1.8.0.md) | 개발 환경, 팀 협업 방식, Git/PR 규칙 |
 | [요구사항 정의서](./docs/specifications/OfficeOps_hub_요구사항정의서_v1.3.0.md) | 요구사항, MVP 범위, 성공 기준 |
 | [기능 명세서](./docs/specifications/OfficeOps_hub_기능명세서_v1.3.0.md) | 기능별 처리 규칙과 예외 조건 |
 | [화면 정의서](./docs/specifications/OfficeOps_hub_화면정의서_v1.3.0.md) | React 화면, URL, 권한, UI 정책 |
@@ -142,8 +147,6 @@ OfficeOps_Hub
 | [테스트 계획서](./docs/specifications/OfficeOps_hub_테스트계획서_v1.3.0.md) | 필수 테스트와 QA 시나리오 |
 | [화면 흐름도](./docs/specifications/OfficeOps_hub_화면흐름도_v1.3.0.md) | Fluid UI 기준 화면 흐름 |
 | [UX Prototype](./docs/prototypes/OfficeOps_hub_사용자경험흐름프로토타입_v1.3.0.html) | 화면 흐름 확인용 HTML 프로토타입 |
-| [README Guide](./docs/guides/OfficeOps_hub_README작성가이드_v1.5.0.md) | README 작성 가이드 |
-| [Team Project Plan Template](./docs/templates/OfficeOps_hub_팀프로젝트기획서템플릿_v1.3.0.md) | 팀 프로젝트 기획안 템플릿 |
 
 ## Requirements
 
