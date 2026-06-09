@@ -1,4 +1,13 @@
-# OfficeOps Hub Project Charter
+# OfficeOps Hub 프로젝트 개요서
+## 문서 버전 이력
+
+| 버전 | 구분 | 수정 사항 | 삭제 사항 |
+| --- | --- | --- | --- |
+| v1.4.0 | 문서별 독립 버전 관리 정책 반영 | 문서마다 실제 업데이트 여부를 기준으로 버전을 상승시키고, 수정된 문서의 파일명과 참조 링크만 함께 갱신하도록 규칙 정리 | 전체 문서 버전을 일괄로 맞춘다는 해석 제거 |
+| v1.0.0 | 최초 기준선 | 기존 문서 내용 기준선 | 없음 |
+| v1.2.0 | 문서 네이밍 및 버전 관리 체계 정리 | 문서 파일명을 번호 없는 한글 제목 기반 규칙으로 정리하고 버전 표기를 semantic version 형식으로 통일 | 문서 번호 접두어와 영문 기반 산출물 파일명 제거 |
+| v1.3.0 | 파일명 버전 최신화 규칙 반영 | 문서 파일명의 버전을 문서 내부 최신 버전과 동일하게 관리하도록 정리하고, 이후 수정 및 버전 상승 시 파일명과 참조 링크를 즉시 갱신하는 규칙 추가 | 최신 버전과 맞지 않는 파일명 버전 표기 제거 |
+
 
 ## 1. Executive Summary / 한 페이지 요약
 
@@ -322,7 +331,7 @@ stateDiagram-v2
 | audit_logs | 관리자/운영 담당자 감사 이력 |
 | attachments | 요청 첨부파일 |
 
-상세 DB 설계는 `docs/specifications/04_erd_db_design.md`를 기준으로 한다.
+상세 DB 설계는 `docs/specifications/OfficeOps_hub_데이터베이스설계서_v1.3.0.md`를 기준으로 한다.
 
 ## 11. API 설계 요약
 
@@ -337,7 +346,7 @@ stateDiagram-v2
 | 대시보드 | `GET /api/admin/dashboard/summary` |
 | 감사 이력 | `GET /api/admin/audit-logs` |
 
-상세 API 명세는 `docs/specifications/05_api_spec.md`를 기준으로 한다.
+상세 API 명세는 `docs/specifications/OfficeOps_hub_인터페이스명세서_v1.3.0.md`를 기준으로 한다.
 
 ## 12. 일정, 마일스톤, 산출물
 
@@ -389,9 +398,9 @@ stateDiagram-v2
 - 기능 단위로 GitHub Issues를 생성한다.
 - 개발 브랜치는 `develop` 기준으로 `feature/be-auth-login`, `feature/fe-request-list`처럼 나눈다.
 - PR 작성 시 작업 내용, 테스트 결과, 문서 변경 여부를 함께 기록한다.
-- API 변경 전에는 `docs/specifications/05_api_spec.md`를 먼저 갱신한다.
-- 상태/권한 변경 전에는 `docs/specifications/06_status_permission_policy.md`를 먼저 갱신한다.
-- DB 변경 시 `docs/specifications/04_erd_db_design.md`와 Flyway migration을 함께 관리한다.
+- API 변경 전에는 `docs/specifications/OfficeOps_hub_인터페이스명세서_v1.3.0.md`를 먼저 갱신한다.
+- 상태/권한 변경 전에는 `docs/specifications/OfficeOps_hub_상태권한정책문서_v1.3.0.md`를 먼저 갱신한다.
+- DB 변경 시 `docs/specifications/OfficeOps_hub_데이터베이스설계서_v1.3.0.md`와 Flyway migration을 함께 관리한다.
 
 ## 14. 리스크와 대응 방안
 
@@ -470,15 +479,15 @@ stateDiagram-v2
 
 | 문서 | 설명 |
 | --- | --- |
-| `docs/specifications/01_requirements.md` | 요구사항 정의 |
-| `docs/specifications/02_feature_spec.md` | 기능 명세 |
-| `docs/specifications/03_screen_spec.md` | 화면 정의 |
-| `docs/specifications/04_erd_db_design.md` | ERD/DB 설계 |
-| `docs/specifications/05_api_spec.md` | API 명세 |
-| `docs/specifications/06_status_permission_policy.md` | 상태/권한 정책 |
-| `docs/specifications/07_test_plan.md` | 테스트 계획 |
-| `docs/team_charter/officeops_hub_team_charter.md` | 팀 운영 및 협업 규칙 |
-| `docs/specifications/09_fluidui_screen_flow.md` | 화면 흐름도 |
+| `docs/specifications/OfficeOps_hub_요구사항정의서_v1.3.0.md` | 요구사항 정의 |
+| `docs/specifications/OfficeOps_hub_기능명세서_v1.3.0.md` | 기능 명세 |
+| `docs/specifications/OfficeOps_hub_화면정의서_v1.3.0.md` | 화면 정의 |
+| `docs/specifications/OfficeOps_hub_데이터베이스설계서_v1.3.0.md` | ERD/DB 설계 |
+| `docs/specifications/OfficeOps_hub_인터페이스명세서_v1.3.0.md` | API 명세 |
+| `docs/specifications/OfficeOps_hub_상태권한정책문서_v1.3.0.md` | 상태/권한 정책 |
+| `docs/specifications/OfficeOps_hub_테스트계획서_v1.3.0.md` | 테스트 계획 |
+| `docs/team_charter/OfficeOps_hub_팀운영문서_v1.4.0.md` | 팀 운영 및 협업 규칙 |
+| `docs/specifications/OfficeOps_hub_화면흐름도_v1.3.0.md` | 화면 흐름도 |
 
 ## 19. HR/전자결재 확장 확정 사항
 

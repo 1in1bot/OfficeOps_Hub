@@ -1,5 +1,14 @@
 # OfficeOps Hub 화면 정의서
 
+## 문서 버전 이력
+
+| 버전 | 기준 | 수정 사항 | 삭제 사항 |
+| --- | --- | --- | --- |
+| v1.0.0 | 관리자 전용 계정 생성 반영 이전 화면 명세 | 로그인/회원가입 공통 화면과 기존 사용자 관리 화면 기준선 | 없음 |
+| v1.1.0 | 관리자 전용 계정 생성 반영 | `ADMIN-USER-CREATE` 화면과 `/admin/users/new` 라우트 추가, 사용자 관리 목록에 사용자 생성 액션 추가, 로그인 화면을 단독 인증 전 화면으로 정리 | `AUTH-SIGNUP`, `/signup`, 로그인 화면의 회원가입 이동 액션 제거 |
+| v1.2.0 | 문서 네이밍 및 버전 관리 체계 정리 | 문서 파일명을 번호 없는 한글 제목 기반 규칙으로 정리하고 버전 표기를 semantic version 형식으로 통일 | 문서 번호 접두어와 영문 기반 산출물 파일명 제거 |
+| v1.3.0 | 파일명 버전 최신화 규칙 반영 | 문서 파일명의 버전을 문서 내부 최신 버전과 동일하게 관리하도록 정리하고, 이후 수정 및 버전 상승 시 파일명과 참조 링크를 즉시 갱신하는 규칙 추가 | 최신 버전과 맞지 않는 파일명 버전 표기 제거 |
+
 ## 1. 문서 목적
 
 이 문서는 `OfficeOps Hub` 프론트엔드에서 구현할 화면 목록, 라우팅 경로, 접근 권한, 주요 UI 요소, 사용자 액션, 연결 API를 정의한다.
@@ -11,7 +20,6 @@ React, Vite, React Router 기반 화면 구현의 기준 문서로 사용한다.
 | ID | 구분 | 화면명 | URL | 접근 권한 | 우선순위 |
 | --- | --- | --- | --- | --- | --- |
 | AUTH-LOGIN | 공통 | 로그인 | `/login` | 비로그인 | 필수 |
-| AUTH-SIGNUP | 공통 | 회원가입 | `/signup` | 비로그인 | 필수 |
 | COMMON-FORBIDDEN | 공통 | 권한 없음 | `/forbidden` | 전체 | 필수 |
 | COMMON-NOT-FOUND | 공통 | 404 Not Found | `*` | 전체 | 필수 |
 | USER-HOME | 사용자 | 사용자 홈 | `/user` | 로그인 사용자 | 필수 |
@@ -52,6 +60,7 @@ React, Vite, React Router 기반 화면 구현의 기준 문서로 사용한다.
 | ADMIN-RESERVATION-CALENDAR | 관리자 | 예약 캘린더 | `/admin/reservations/calendar` | ROLE_OPERATOR, ROLE_ADMIN | 권장 |
 | ADMIN-RESOURCE-LIST | 관리자 | 회의실/자원 관리 | `/admin/resources` | ROLE_ADMIN | 필수 |
 | ADMIN-USER-LIST | 관리자 | 사용자 관리 | `/admin/users` | ROLE_ADMIN | 선택 |
+| ADMIN-USER-CREATE | 관리자 | 사용자 계정 생성 | `/admin/users/new` | ROLE_ADMIN | 필수 |
 | ADMIN-USER-DETAIL | 관리자 | 사용자 상세/권한 변경 | `/admin/users/:id` | ROLE_ADMIN | 권장 |
 | ADMIN-APPROVAL-LIST | 관리자 | 전체 전자결재 관리 | `/admin/approvals` | ROLE_ADMIN | 필수 |
 | ADMIN-APPROVAL-FORM-LIST | 관리자 | 전자결재 양식 관리 | `/admin/approval-forms` | ROLE_ADMIN | 필수 |
@@ -65,14 +74,12 @@ React, Vite, React Router 기반 화면 구현의 기준 문서로 사용한다.
 대상 화면:
 
 - 로그인
-- 회원가입
 
 구성 요소:
 
 - 서비스명
 - 입력 폼
 - 제출 버튼
-- 로그인/회원가입 이동 링크
 - 에러 메시지 영역
 
 ### 3.2 사용자 레이아웃
@@ -132,7 +139,6 @@ React, Vite, React Router 기반 화면 구현의 기준 문서로 사용한다.
 | 액션 | 설명 |
 | --- | --- |
 | 로그인 | 로그인 API 호출 |
-| 회원가입 이동 | `/signup`으로 이동 |
 
 처리 규칙:
 
@@ -140,38 +146,6 @@ React, Vite, React Router 기반 화면 구현의 기준 문서로 사용한다.
 - 일반 직원은 `/user`로 이동한다.
 - 관리자는 `/admin/dashboard`로 이동한다.
 - 로그인 실패 시 에러 메시지를 표시한다.
-
-### AUTH-SIGNUP. 회원가입
-
-| 항목 | 내용 |
-| --- | --- |
-| URL | `/signup` |
-| 접근 권한 | 비로그인 사용자 |
-| 목적 | 일반 직원 계정을 생성한다. |
-| 연결 API | `POST /api/auth/signup` |
-
-입력 항목:
-
-| 항목 | 타입 | 필수 |
-| --- | --- | --- |
-| 이메일 | text/email | Y |
-| 비밀번호 | password | Y |
-| 비밀번호 확인 | password | Y |
-| 이름 | text | Y |
-| 부서 | text/select | Y |
-
-버튼/액션:
-
-| 액션 | 설명 |
-| --- | --- |
-| 회원가입 | 회원가입 API 호출 |
-| 로그인 이동 | `/login`으로 이동 |
-
-처리 규칙:
-
-- 비밀번호와 비밀번호 확인이 일치해야 한다.
-- 회원가입 성공 시 로그인 화면으로 이동한다.
-- 이메일 중복 또는 입력값 오류는 화면에 표시한다.
 
 ### COMMON-FORBIDDEN. 권한 없음
 
@@ -947,7 +921,43 @@ React, Vite, React Router 기반 화면 구현의 기준 문서로 사용한다.
 
 | 액션 | 설명 |
 | --- | --- |
+| 사용자 생성 | `/admin/users/new`로 이동 |
 | 상세 보기 | `/admin/users/:id`로 이동 |
+
+### ADMIN-USER-CREATE. 사용자 계정 생성
+
+| 항목 | 내용 |
+| --- | --- |
+| URL | `/admin/users/new` |
+| 접근 권한 | ROLE_ADMIN |
+| 목적 | 시스템 관리자가 사용자 계정을 생성한다. |
+| 연결 API | `POST /api/admin/users` |
+| 우선순위 | 필수 |
+
+입력 항목:
+
+| 항목 | 타입 | 필수 |
+| --- | --- | --- |
+| 이름 | text | Y |
+| 이메일 | text/email | Y |
+| 부서 | select | Y |
+| 초기 권한 | select | Y |
+| 계정 상태 | select | Y |
+| 임시 비밀번호 | password/text | Y |
+
+버튼/액션:
+
+| 액션 | 설명 |
+| --- | --- |
+| 생성 | 사용자 계정 생성 API 호출 |
+| 취소 | 사용자 관리 목록으로 이동 |
+
+처리 규칙:
+
+- 사용자 계정 생성은 `ROLE_ADMIN` 전용이다.
+- 생성 성공 시 사용자 상세 또는 사용자 관리 목록으로 이동한다.
+- 이메일 중복 또는 입력값 오류는 화면에 표시한다.
+- 사용자 생성 이력은 감사 이력으로 저장한다.
 
 ### ADMIN-USER-DETAIL. 사용자 상세/권한 변경
 

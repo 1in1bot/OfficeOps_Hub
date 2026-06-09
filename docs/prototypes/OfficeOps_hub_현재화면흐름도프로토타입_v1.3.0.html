@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OfficeOps Hub Page Flow</title>
+  <style>
+    :root {
+      --bg: #f7f8fa;
+      --grid: #e6ebef;
+      --page: #fff;
+      --ink: #28323d;
+      --muted: #7a8794;
+      --line: #2f9df4;
+      --line-soft: #8bc8f8;
+      --border: #d7dee6;
+      --head: #eef2f5;
+      --auth: #6f8190;
+      --user: #5f9f4a;
+      --manager: #8a7a37;
+      --ops: #4f7f9d;
+      --hr: #4d9368;
+      --finance: #8c6b9d;
+      --admin: #8a6072;
+      --system: #586473;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Pretendard", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      letter-spacing: 0;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.95);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-weight: 800;
+    }
+
+    .version {
+      margin-left: 8px;
+      color: var(--line);
+      font-weight: 800;
+    }
+
+    .legend {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    .version-card {
+      position: absolute;
+      left: 48px;
+      top: 36px;
+      z-index: 3;
+      width: 360px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 5px 14px rgba(40, 50, 61, 0.08);
+      color: #526273;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .version-card strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--ink);
+      font-size: 13px;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legend span::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      background: var(--system);
+    }
+
+    .legend .user::before { background: var(--user); }
+    .legend .approval::before { background: var(--manager); }
+    .legend .ops::before { background: var(--ops); }
+    .legend .hr::before { background: var(--hr); }
+    .legend .admin::before { background: var(--admin); }
+
+    .shell {
+      height: calc(100vh - 50px);
+      min-height: 760px;
+      overflow: auto;
+      background:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+        var(--bg);
+      background-size: 120px 120px;
+    }
+
+    .canvas {
+      position: relative;
+      width: 2700px;
+      height: 1780px;
+      margin: 0 auto;
+    }
+
+    .connections {
+      position: absolute;
+      inset: 0;
+      width: 2700px;
+      height: 1780px;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .edge {
+      fill: none;
+      stroke: var(--line);
+      stroke-width: 1.8;
+      opacity: 0.72;
+      marker-end: url(#arrow);
+      transition: opacity 120ms ease, stroke-width 120ms ease;
+    }
+
+    .edge.soft {
+      stroke: var(--line-soft);
+      stroke-width: 1.2;
+      opacity: 0.44;
+    }
+
+    .edge.is-muted {
+      opacity: 0.08;
+    }
+
+    .edge.is-active {
+      stroke-width: 3.2;
+      opacity: 1;
+    }
+
+    .group-title {
+      position: absolute;
+      z-index: 2;
+      min-width: 138px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0;
+      box-shadow: 0 5px 14px rgba(40, 50, 61, 0.12);
+      text-align: center;
+    }
+
+    .group-title.auth { background: var(--auth); }
+    .group-title.user { background: var(--user); }
+    .group-title.manager { background: var(--manager); }
+    .group-title.ops { background: var(--ops); }
+    .group-title.hr { background: var(--hr); }
+    .group-title.admin { background: var(--admin); }
+
+    .page {
+      position: absolute;
+      z-index: 2;
+      width: 210px;
+      aspect-ratio: 16 / 10;
+      transform: translate(-50%, -50%);
+      border: 1px solid var(--border);
+      background: var(--page);
+      box-shadow: 0 5px 14px rgba(40, 50, 61, 0.08);
+      overflow: hidden;
+      cursor: pointer;
+      transition: opacity 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+    }
+
+    .page.is-muted {
+      opacity: 0.26;
+    }
+
+    .page.is-selected {
+      outline: 3px solid rgba(47, 157, 244, 0.32);
+      box-shadow: 0 8px 22px rgba(47, 157, 244, 0.2);
+      transform: translate(-50%, -50%) scale(1.03);
+    }
+
+    .page.is-target {
+      outline: 3px solid rgba(47, 157, 244, 0.2);
+      box-shadow: 0 8px 18px rgba(40, 50, 61, 0.14);
+    }
+
+    .page .head {
+      height: 38px;
+      display: grid;
+      align-content: center;
+      gap: 3px;
+      padding: 5px 8px;
+      background: var(--head);
+      color: #fff;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .page .title {
+      overflow: hidden;
+      color: #fff;
+      font-size: 12px;
+      line-height: 1.1;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .page .route {
+      display: block;
+      overflow: hidden;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1.05;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .page .body {
+      padding: 9px 10px;
+      color: #526273;
+      font-size: 12px;
+      line-height: 1.35;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .auth .head { background: var(--auth); }
+    .user .head { background: var(--user); }
+    .manager .head { background: var(--manager); }
+    .ops .head { background: var(--ops); }
+    .hr .head { background: var(--hr); }
+    .finance .head { background: var(--finance); }
+    .admin .head { background: var(--admin); }
+    .system .head { background: var(--system); }
+
+    @media (max-width: 760px) {
+      .topbar {
+        align-items: flex-start;
+        height: auto;
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px 14px;
+      }
+
+      .legend {
+        flex-wrap: wrap;
+        gap: 9px;
+      }
+
+      .shell {
+        height: calc(100vh - 96px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div><span class="brand">OfficeOps Hub</span> 전체 페이지 흐름도 <span class="version">v1.3.0</span></div>
+    <div class="legend" aria-label="역할 구분">
+      <span class="user">사용자</span>
+      <span class="approval">승인</span>
+      <span class="ops">운영</span>
+      <span class="hr">HR/재무</span>
+      <span class="admin">관리자</span>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="canvas" id="canvas" aria-label="전체 페이지 흐름">
+      <div class="version-card">
+        <strong>문서 버전 이력</strong>
+        v1.0.0: 관리자 전용 계정 생성 반영 이전 화면 흐름 기준선<br>
+        v1.1.0 수정: `/admin/users/new` 사용자 계정 생성 카드와 관리자 흐름 추가<br>
+        v1.1.0 삭제: `/signup` 공개 회원가입 카드와 로그인-회원가입 연결 제거<br>
+        v1.2.0 수정: 문서 파일명과 버전 표기를 새 규칙으로 정리
+      </div>
+      <svg class="connections" id="connections" viewBox="0 0 2700 1780" aria-hidden="true">
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <path d="M 1 1 L 7 4 L 1 7 z" fill="#2f9df4"></path>
+          </marker>
+        </defs>
+      </svg>
+    </section>
+  </main>
+
+  <script>
+    const pages = [
+      ["login", "auth", "로그인", "/login", "계정 인증", 100, 160],
+      ["adminUserCreate", "admin", "사용자 계정 생성", "/admin/users/new", "ROLE_ADMIN 전용 계정 생성", 1900, 860],
+      ["forbidden", "system", "권한 없음", "/forbidden", "권한 없는 접근 안내", 100, 360],
+      ["notFound", "system", "404", "*", "잘못된 경로 안내", 100, 460],
+
+      ["userHome", "user", "사용자 홈", "/user", "요청/예약/HR 요약", 360, 160],
+      ["requestList", "user", "내 요청 목록", "/user/requests", "지원/비품 요청 조회", 360, 280],
+      ["requestCreate", "user", "요청 등록", "/user/requests/new", "지원/비품/시설 신청", 580, 230],
+      ["requestDetail", "user", "요청 상세", "/user/requests/:id", "상태와 처리 이력", 580, 330],
+      ["reservationList", "user", "내 예약 목록", "/user/reservations", "내 공간 예약 조회", 360, 430],
+      ["reservationCreate", "user", "회의실 예약", "/user/reservations/new", "회의실/라운지 신청", 580, 430],
+      ["reservationCalendar", "user", "예약 캘린더", "/user/reservations/calendar", "공간별 일정 확인", 580, 530],
+      ["assetList", "user", "자산 목록", "/user/assets", "대여 가능 자산 확인", 360, 610],
+      ["assetLoans", "user", "자산 대여 현황", "/user/asset-loans", "내 대여/반납 확인", 580, 610],
+      ["attendanceHome", "user", "근태 홈", "/user/attendance", "출퇴근/휴가 요약", 360, 760],
+      ["leaveBalance", "user", "내 연차 현황", "/user/attendance/leaves", "연차 잔여/사용 내역", 580, 720],
+      ["attendanceRecords", "user", "출퇴근 기록", "/user/attendance/records", "출근/퇴근 기록", 580, 820],
+      ["approvalList", "user", "내 전자결재 문서", "/user/approvals", "HR/비용 신청 조회", 360, 960],
+      ["approvalCreate", "user", "전자결재 작성", "/user/approvals/new", "휴가/재택/비용 신청", 580, 920],
+      ["approvalDetail", "user", "전자결재 상세", "/user/approvals/:id", "승인 단계와 결과", 580, 1020],
+      ["myInfo", "user", "내 정보", "/user/me", "계정 정보 확인", 360, 1120],
+      ["password", "user", "비밀번호 변경", "/user/me/password", "비밀번호 수정", 580, 1120],
+      ["notifications", "user", "알림 목록", "/user/notifications", "처리 결과 알림", 800, 1120],
+
+      ["managerReqList", "manager", "팀 요청 승인함", "/manager/approvals", "지원 요청 1차 승인", 850, 280],
+      ["managerReqDetail", "manager", "팀 요청 상세", "/manager/approvals/:id", "승인/반려 처리", 1050, 280],
+      ["managerAppList", "manager", "팀 전자결재함", "/manager/e-approvals", "HR/비용 결재 승인", 850, 920],
+      ["managerAppDetail", "manager", "팀 전자결재 상세", "/manager/e-approvals/:id", "결재 승인/반려", 1050, 920],
+
+      ["operatorReqList", "ops", "운영 요청함", "/operator/requests", "최종 승인 대기 처리", 1260, 280],
+      ["operatorReqDetail", "ops", "운영 요청 상세", "/operator/requests/:id", "담당자/마감/완료", 1460, 280],
+
+      ["hrAttendance", "hr", "근태 대시보드", "/hr/attendance", "부서별 근태 관리", 1260, 670],
+      ["hrLeaves", "hr", "HR 연차 관리", "/hr/leaves", "연차 조정/사용 관리", 1460, 620],
+      ["hrCertificates", "hr", "증명서 발급 요청", "/hr/certificates", "재직/경력증명 처리", 1460, 720],
+      ["hrApprovals", "hr", "HR 전자결재함", "/hr/e-approvals", "휴가/근태 최종 처리", 1260, 920],
+      ["financeApprovals", "finance", "재무 전자결재함", "/finance/e-approvals", "비용 결재 최종 처리", 1260, 1040],
+      ["financeExpenses", "finance", "지출/법인카드 처리", "/finance/expenses", "지출/법인카드 처리", 1460, 1040],
+
+      ["adminDashboard", "admin", "관리자 대시보드", "/admin/dashboard", "전체 운영 현황", 1700, 160],
+      ["adminRequests", "admin", "전체 요청 관리", "/admin/requests", "요청 통합 조회", 1700, 280],
+      ["adminRequestDetail", "admin", "요청 상세 관리", "/admin/requests/:id", "상태/담당자 변경", 1900, 280],
+      ["adminAssets", "admin", "자산 관리", "/admin/assets", "자산 등록/상태 변경", 1700, 400],
+      ["adminReservations", "admin", "예약 관리", "/admin/reservations", "예약 조회/취소", 1700, 520],
+      ["adminReservationCalendar", "admin", "예약 캘린더 관리", "/admin/reservations/calendar", "전체 예약 현황", 1900, 520],
+      ["adminResources", "admin", "회의실 자원 관리", "/admin/resources", "회의실/라운지 설정", 1700, 640],
+      ["adminUsers", "admin", "사용자 관리", "/admin/users", "계정 생성/권한 관리", 1700, 760],
+      ["adminUserDetail", "admin", "사용자 상세", "/admin/users/:id", "권한/상태 변경", 1900, 760],
+      ["adminApprovals", "admin", "전체 전자결재 관리", "/admin/approvals", "결재 문서 통합 관리", 1700, 920],
+      ["adminApprovalForms", "admin", "전자결재 양식 관리", "/admin/approval-forms", "신청 유형/양식 설정", 1900, 920],
+      ["adminAttendancePolicy", "admin", "근태 정책 관리", "/admin/attendance-policies", "근무/연차 정책 설정", 1900, 1020],
+      ["adminAudit", "admin", "감사 이력", "/admin/audit-logs", "주요 작업 이력", 1900, 1120],
+    ];
+
+    const edges = [
+      ["login", "userHome"],
+      ["login", "adminDashboard"],
+      ["login", "managerReqList"],
+      ["login", "operatorReqList"],
+      ["login", "hrAttendance"],
+      ["login", "financeApprovals"],
+      ["userHome", "requestList"],
+      ["requestList", "requestCreate"],
+      ["requestList", "requestDetail"],
+      ["requestCreate", "requestDetail"],
+      ["requestCreate", "managerReqList"],
+      ["managerReqList", "managerReqDetail"],
+      ["managerReqDetail", "operatorReqList"],
+      ["operatorReqList", "operatorReqDetail"],
+      ["operatorReqDetail", "requestDetail"],
+      ["operatorReqDetail", "adminAudit", "soft"],
+      ["userHome", "reservationList"],
+      ["reservationList", "reservationCreate"],
+      ["reservationList", "reservationCalendar"],
+      ["reservationCreate", "reservationList"],
+      ["reservationCreate", "adminReservations"],
+      ["adminReservations", "adminReservationCalendar"],
+      ["adminReservations", "reservationList"],
+      ["userHome", "assetList"],
+      ["assetList", "assetLoans"],
+      ["requestCreate", "adminAssets", "soft"],
+      ["adminAssets", "assetLoans", "soft"],
+      ["userHome", "attendanceHome"],
+      ["attendanceHome", "leaveBalance"],
+      ["attendanceHome", "attendanceRecords"],
+      ["attendanceHome", "approvalCreate"],
+      ["userHome", "approvalList"],
+      ["approvalList", "approvalCreate"],
+      ["approvalList", "approvalDetail"],
+      ["approvalCreate", "approvalDetail"],
+      ["approvalCreate", "managerAppList"],
+      ["managerAppList", "managerAppDetail"],
+      ["managerAppDetail", "hrApprovals"],
+      ["managerAppDetail", "financeApprovals"],
+      ["hrApprovals", "approvalDetail"],
+      ["financeApprovals", "financeExpenses"],
+      ["financeExpenses", "approvalDetail"],
+      ["hrApprovals", "hrAttendance"],
+      ["hrApprovals", "hrLeaves"],
+      ["hrApprovals", "hrCertificates"],
+      ["hrAttendance", "hrLeaves", "soft"],
+      ["hrCertificates", "approvalDetail", "soft"],
+      ["userHome", "myInfo"],
+      ["myInfo", "password"],
+      ["notifications", "requestDetail", "soft"],
+      ["notifications", "approvalDetail", "soft"],
+      ["adminDashboard", "adminRequests"],
+      ["adminRequests", "adminRequestDetail"],
+      ["adminDashboard", "adminAssets"],
+      ["adminDashboard", "adminReservations"],
+      ["adminReservations", "adminReservationCalendar"],
+      ["adminDashboard", "adminResources"],
+      ["adminDashboard", "adminUsers"],
+      ["adminUsers", "adminUserCreate"],
+      ["adminUsers", "adminUserDetail"],
+      ["adminUserCreate", "adminUserDetail"],
+      ["adminDashboard", "adminApprovals"],
+      ["adminApprovals", "adminApprovalForms"],
+      ["adminApprovals", "adminAttendancePolicy"],
+      ["adminDashboard", "adminAudit"],
+      ["adminRequestDetail", "adminAudit", "soft"],
+      ["adminUserDetail", "adminAudit", "soft"],
+      ["adminUserCreate", "adminAudit", "soft"],
+      ["adminResources", "adminReservations", "soft"],
+      ["adminApprovalForms", "approvalCreate", "soft"],
+      ["adminAttendancePolicy", "attendanceHome", "soft"],
+      ["forbidden", "login", "soft"],
+      ["notFound", "login", "soft"],
+    ];
+
+    const groups = [
+      ["공통", "auth", 40, 70],
+      ["사용자", "user", 300, 70],
+      ["팀장 승인", "manager", 820, 70],
+      ["운영", "ops", 1220, 70],
+      ["HR / 재무", "hr", 1220, 560],
+      ["관리자", "admin", 1660, 70],
+    ];
+
+    const canvas = document.querySelector("#canvas");
+    const svg = document.querySelector("#connections");
+    const pageMap = new Map(pages.map((page) => [page[0], page]));
+    const xScale = 1.22;
+    const yScale = 1.42;
+
+    function pageCenter(id) {
+      const page = pageMap.get(id);
+      return { x: page[5] * xScale, y: page[6] * yScale };
+    }
+
+    function pathFor(from, to, offset) {
+      const a = pageCenter(from);
+      const b = pageCenter(to);
+      const dx = b.x - a.x;
+      const dy = b.y - a.y;
+      const distance = Math.hypot(dx, dy) || 1;
+      const ux = dx / distance;
+      const uy = dy / distance;
+      const halfW = 105;
+      const halfH = 66;
+      const fromInset = Math.min(
+        Math.abs(halfW / (ux || 0.0001)),
+        Math.abs(halfH / (uy || 0.0001))
+      );
+      const toInset = Math.min(
+        Math.abs(halfW / (ux || 0.0001)),
+        Math.abs(halfH / (uy || 0.0001))
+      );
+      const startX = a.x + ux * fromInset;
+      const startY = a.y + uy * fromInset;
+      const endX = b.x - ux * toInset;
+      const endY = b.y - uy * toInset;
+      return `M ${startX} ${startY} L ${endX} ${endY}`;
+    }
+
+    function renderGroups() {
+      groups.forEach(([title, role, x, y]) => {
+        const label = document.createElement("div");
+        label.className = `group-title ${role}`;
+        label.style.left = `${x * xScale}px`;
+        label.style.top = `${y * yScale}px`;
+        label.textContent = title;
+        canvas.appendChild(label);
+      });
+    }
+
+    function renderPages() {
+      pages.forEach(([id, role, title, route, body, x, y]) => {
+        const node = document.createElement("article");
+        node.className = `page ${role}`;
+        node.dataset.id = id;
+        node.style.left = `${x * xScale}px`;
+        node.style.top = `${y * yScale}px`;
+        node.innerHTML = `
+          <div class="head">
+            <span class="title">${title}</span>
+            <span class="route">URL ${route}</span>
+          </div>
+          <div class="body">${body}</div>
+        `;
+        node.addEventListener("click", () => highlightFrom(id));
+        canvas.appendChild(node);
+      });
+    }
+
+    function renderEdges() {
+      edges.forEach(([from, to, type], index) => {
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.classList.add("edge");
+        if (type === "soft") path.classList.add("soft");
+        path.dataset.from = from;
+        path.dataset.to = to;
+        path.setAttribute("d", pathFor(from, to, ((index % 5) - 2) * 8));
+        svg.appendChild(path);
+      });
+    }
+
+    function highlightFrom(id) {
+      const targetIds = new Set(edges.filter(([from]) => from === id).map(([, to]) => to));
+      const hasOutgoing = targetIds.size > 0;
+
+      document.querySelectorAll(".page").forEach((page) => {
+        const pageId = page.dataset.id;
+        page.classList.toggle("is-selected", pageId === id);
+        page.classList.toggle("is-target", targetIds.has(pageId));
+        page.classList.toggle("is-muted", hasOutgoing && pageId !== id && !targetIds.has(pageId));
+      });
+
+      document.querySelectorAll(".edge").forEach((edge) => {
+        const active = edge.dataset.from === id;
+        edge.classList.toggle("is-active", active);
+        edge.classList.toggle("is-muted", hasOutgoing && !active);
+      });
+    }
+
+    canvas.addEventListener("click", (event) => {
+      if (event.target.closest(".page")) return;
+      document.querySelectorAll(".page").forEach((page) => {
+        page.classList.remove("is-selected", "is-target", "is-muted");
+      });
+      document.querySelectorAll(".edge").forEach((edge) => {
+        edge.classList.remove("is-active", "is-muted");
+      });
+    });
+
+    renderEdges();
+    renderGroups();
+    renderPages();
+  </script>
+</body>
+</html>

@@ -1,5 +1,16 @@
 # OfficeOps Hub
 
+## 문서 버전 이력
+
+| 버전 | 기준 | 수정 사항 | 삭제 사항 |
+| --- | --- | --- | --- |
+| v1.0.0 | 관리자 전용 계정 생성 반영 이전 기준 문서 | 기존 프로젝트 개요, 기능 범위, 기술 스택, 팀 프로젝트 안내 기준선 | 없음 |
+| v1.1.0 | 관리자 전용 계정 생성 반영 | 인증 기능을 관리자 사용자 계정 생성과 로그인 중심으로 정리, 권한 설명에 HR/재무/시스템 관리자 역할 반영, API 요약을 `POST /api/admin/users` 기준으로 수정 | 공개 회원가입 중심 설명과 `POST /api/auth/signup` 요약 제거 |
+| v1.2.0 | 문서 네이밍 및 버전 관리 체계 정리 | 문서 파일명을 번호 없는 한글 제목 기반 규칙으로 정리하고 버전 표기를 semantic version 형식으로 통일 | 문서 번호 접두어와 영문 기반 산출물 파일명 제거 |
+| v1.3.0 | 파일명 버전 최신화 규칙 반영 | 문서 파일명의 버전을 문서 내부 최신 버전과 동일하게 관리하도록 정리하고, 이후 수정 및 버전 상승 시 파일명과 참조 링크를 즉시 갱신하는 규칙 추가 | 최신 버전과 맞지 않는 파일명 버전 표기 제거 |
+| v1.4.0 | 문서별 독립 버전 관리 정책 반영 | 문서마다 실제 업데이트 여부를 기준으로 버전을 상승시키고, 수정된 문서의 파일명과 참조 링크만 함께 갱신하도록 규칙 정리 | 전체 문서 버전을 일괄로 맞춘다는 해석 제거 |
+| v1.5.0 | README 작성 가이드 명칭 반영 | 문서 목록의 README 작성 가이드 파일명과 링크를 `OfficeOps_hub_README작성가이드_v1.5.0.md` 기준으로 수정 | `읽어보기작성가이드` 파일명 참조 제거 |
+
 사내 비품 요청, 방문 신청, 시설 요청, 회의실 예약, 자산 대여/반납 업무를 통합 관리하는 팀 프로젝트 기반 사내 운영 관리 웹 애플리케이션입니다.
 
 ## Overview
@@ -24,8 +35,8 @@
 
 ## Features
 
-- 회원가입, 로그인, JWT 기반 인증
-- 일반 직원, 팀장, 운영 담당자, 관리자 권한 분리
+- 관리자 사용자 계정 생성, 로그인, JWT 기반 인증
+- 일반 직원, 팀장, 운영 담당자, HR 담당자, 재무 담당자, 시스템 관리자 권한 분리
 - 비품 요청, 방문 신청, 시설 요청 등록
 - 팀장 1차 승인/반려
 - 운영 담당자 최종 승인/반려
@@ -119,20 +130,20 @@ OfficeOps_Hub
 
 | Document | Description |
 | --- | --- |
-| [Project Charter](./docs/project_charter/officeops_hub_project_charter.md) | 목표, 범위, 역할, 일정, 산출물을 포함한 공식 프로젝트 개요서 |
-| [Detailed Plan](./docs/project_charter/officeops_hub_detailed_plan.md) | 상세 기능 범위와 설계 방향 |
-| [Team Charter](./docs/team_charter/officeops_hub_team_charter.md) | 개발 환경, 팀 협업 방식, Git/PR 규칙 |
-| [요구사항 정의서](./docs/specifications/01_requirements.md) | 요구사항, MVP 범위, 성공 기준 |
-| [기능 명세서](./docs/specifications/02_feature_spec.md) | 기능별 처리 규칙과 예외 조건 |
-| [화면 정의서](./docs/specifications/03_screen_spec.md) | React 화면, URL, 권한, UI 정책 |
-| [ERD/DB 설계서](./docs/specifications/04_erd_db_design.md) | 테이블, 관계, 인덱스, 마이그레이션 순서 |
-| [API 명세서](./docs/specifications/05_api_spec.md) | REST API, 요청/응답, 에러 코드 |
-| [상태/권한 정책](./docs/specifications/06_status_permission_policy.md) | 상태 전이, 권한, 데이터 접근 규칙 |
-| [테스트 계획서](./docs/specifications/07_test_plan.md) | 필수 테스트와 QA 시나리오 |
-| [화면 흐름도](./docs/specifications/09_fluidui_screen_flow.md) | Fluid UI 기준 화면 흐름 |
-| [UX Prototype](./docs/prototypes/officeops_ux_flow_prototype.html) | 화면 흐름 확인용 HTML 프로토타입 |
-| [README Guide](./docs/guides/readme_guide.md) | README 작성 가이드 |
-| [Team Project Plan Template](./docs/templates/team_project_plan_template.md) | 팀 프로젝트 기획안 템플릿 |
+| [Project Charter](./docs/project_charter/OfficeOps_hub_프로젝트개요서_v1.4.0.md) | 목표, 범위, 역할, 일정, 산출물을 포함한 공식 프로젝트 개요서 |
+| [Detailed Plan](./docs/project_charter/OfficeOps_hub_상세계획서_v1.3.0.md) | 상세 기능 범위와 설계 방향 |
+| [Team Charter](./docs/team_charter/OfficeOps_hub_팀운영문서_v1.4.0.md) | 개발 환경, 팀 협업 방식, Git/PR 규칙 |
+| [요구사항 정의서](./docs/specifications/OfficeOps_hub_요구사항정의서_v1.3.0.md) | 요구사항, MVP 범위, 성공 기준 |
+| [기능 명세서](./docs/specifications/OfficeOps_hub_기능명세서_v1.3.0.md) | 기능별 처리 규칙과 예외 조건 |
+| [화면 정의서](./docs/specifications/OfficeOps_hub_화면정의서_v1.3.0.md) | React 화면, URL, 권한, UI 정책 |
+| [ERD/DB 설계서](./docs/specifications/OfficeOps_hub_데이터베이스설계서_v1.3.0.md) | 테이블, 관계, 인덱스, 마이그레이션 순서 |
+| [API 명세서](./docs/specifications/OfficeOps_hub_인터페이스명세서_v1.3.0.md) | REST API, 요청/응답, 에러 코드 |
+| [상태/권한 정책](./docs/specifications/OfficeOps_hub_상태권한정책문서_v1.3.0.md) | 상태 전이, 권한, 데이터 접근 규칙 |
+| [테스트 계획서](./docs/specifications/OfficeOps_hub_테스트계획서_v1.3.0.md) | 필수 테스트와 QA 시나리오 |
+| [화면 흐름도](./docs/specifications/OfficeOps_hub_화면흐름도_v1.3.0.md) | Fluid UI 기준 화면 흐름 |
+| [UX Prototype](./docs/prototypes/OfficeOps_hub_사용자경험흐름프로토타입_v1.3.0.html) | 화면 흐름 확인용 HTML 프로토타입 |
+| [README Guide](./docs/guides/OfficeOps_hub_README작성가이드_v1.5.0.md) | README 작성 가이드 |
+| [Team Project Plan Template](./docs/templates/OfficeOps_hub_팀프로젝트기획서템플릿_v1.3.0.md) | 팀 프로젝트 기획안 템플릿 |
 
 ## Requirements
 
@@ -202,7 +213,7 @@ VITE_API_BASE_URL=http://localhost:8080/api
 
 | Domain | API |
 | --- | --- |
-| Auth | `POST /api/auth/signup`, `POST /api/auth/login`, `GET /api/users/me` |
+| Auth/User Admin | `POST /api/admin/users`, `POST /api/auth/login`, `GET /api/users/me` |
 | Requests | `GET /api/requests`, `POST /api/requests`, `GET /api/requests/{id}` |
 | Manager | `GET /api/manager/approvals`, `PATCH /api/manager/approvals/{id}/approve` |
 | Operator | `GET /api/operator/requests`, `PATCH /api/operator/requests/{id}/approve` |
@@ -211,7 +222,7 @@ VITE_API_BASE_URL=http://localhost:8080/api
 | Dashboard | `GET /api/admin/dashboard/summary` |
 | Audit | `GET /api/admin/audit-logs` |
 
-상세 API는 [API 명세서](./docs/specifications/05_api_spec.md)를 기준으로 합니다.
+상세 API는 [API 명세서](./docs/specifications/OfficeOps_hub_인터페이스명세서_v1.3.0.md)를 기준으로 합니다.
 
 ## Testing
 

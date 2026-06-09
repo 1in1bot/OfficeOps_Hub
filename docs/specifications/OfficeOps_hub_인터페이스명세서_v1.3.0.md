@@ -1,4 +1,13 @@
-# OfficeOps Hub API 명세서
+# OfficeOps Hub 인터페이스 명세서
+
+## 문서 버전 이력
+
+| 버전 | 기준 | 수정 사항 | 삭제 사항 |
+| --- | --- | --- | --- |
+| v1.0.0 | 관리자 전용 계정 생성 반영 이전 API 명세 | 공개 회원가입 API와 기존 사용자 관리 API 기준선 | 없음 |
+| v1.1.0 | 관리자 전용 계정 생성 반영 | 공개 계정 생성 API를 MVP 제외로 명시, 사용자 관리 API에 `POST /admin/users` 추가, `ROLE_ADMIN` 전용 계정 생성 규칙과 감사 이력 저장 규칙 추가 | 비로그인 `POST /auth/signup` 공개 가입 API 제공 내용 제거 |
+| v1.2.0 | 문서 네이밍 및 버전 관리 체계 정리 | 문서 파일명을 번호 없는 한글 제목 기반 규칙으로 정리하고 버전 표기를 semantic version 형식으로 통일 | 문서 번호 접두어와 영문 기반 산출물 파일명 제거 |
+| v1.3.0 | 파일명 버전 최신화 규칙 반영 | 문서 파일명의 버전을 문서 내부 최신 버전과 동일하게 관리하도록 정리하고, 이후 수정 및 버전 상승 시 파일명과 참조 링크를 즉시 갱신하는 규칙 추가 | 최신 버전과 맞지 않는 파일명 버전 표기 제거 |
 
 ## 1. 문서 목적
 
@@ -59,38 +68,14 @@ Authorization: Bearer {accessToken}
 
 ## 3. 인증 API
 
-### 3.1 회원가입
+### 3.1 공개 계정 생성 API
 
 ```text
-POST /auth/signup
-권한: 비로그인
+MVP 범위 제외
 ```
 
-Request:
-
-```json
-{
-  "email": "user@company.com",
-  "password": "password123!",
-  "name": "홍길동",
-  "departmentId": 1
-}
-```
-
-Response:
-
-```json
-{
-  "success": true,
-  "data": {
-    "id": 1,
-    "email": "user@company.com",
-    "name": "홍길동",
-    "role": "ROLE_USER",
-    "status": "ACTIVE"
-  }
-}
-```
+일반 사용자의 공개 계정 생성 API는 제공하지 않는다.
+사용자 계정은 `ROLE_ADMIN`이 사용자 관리 API에서 생성한다.
 
 ### 3.2 로그인
 
@@ -159,6 +144,34 @@ POST /auth/reissue
 ```
 
 ## 4. 사용자 관리 API
+
+### 4.0 사용자 계정 생성
+
+```text
+POST /admin/users
+권한: ROLE_ADMIN
+```
+
+Request:
+
+```json
+{
+  "email": "user@company.com",
+  "name": "홍길동",
+  "departmentId": 1,
+  "role": "ROLE_USER",
+  "status": "ACTIVE",
+  "temporaryPassword": "TempPassword123!"
+}
+```
+
+처리 규칙:
+
+- `ROLE_ADMIN`만 사용자 계정을 생성할 수 있다.
+- 운영 담당자, HR 담당자, 재무 담당자는 사용자 계정을 생성할 수 없다.
+- 이메일은 중복될 수 없다.
+- 비밀번호는 해시 저장한다.
+- 사용자 생성 이력은 감사 이력으로 저장한다.
 
 ### 4.1 사용자 목록 조회
 
