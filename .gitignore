@@ -1,0 +1,77 @@
+# OS generated files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE and editor settings
+.idea/
+*.iml
+.vscode/
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.classpath
+.project
+.settings/
+
+# Local environment files
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Java / Spring Boot / Gradle
+.gradle/
+build/
+out/
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Node / React / Vite
+node_modules/
+dist/
+.vite/
+coverage/
+*.tsbuildinfo
+
+# Test and cache output
+.cache/
+.pytest_cache/
+.nyc_output/
+
+# Docker and local runtime data
+docker-data/
+data/
+tmp/
+temp/
+
+# Database and local binary dumps
+*.db
+*.sqlite
+*.sqlite3
+*.dump
+
+# Secrets and certificates
+*.pem
+*.key
+*.crt
+*.p12
+*.jks
+
+# Build tool wrapper generated state
+.mvn/wrapper/maven-wrapper.jar
+gradle-app.setting
+
