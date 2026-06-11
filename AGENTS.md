@@ -1,4 +1,4 @@
-﻿# Agent Roles
+# Agent Roles
 
 이 문서는 `OfficeOps Hub` 저장소에서 AI 에이전트 또는 자동화 도구가 작업할 때 따라야 하는 프로젝트 지침이다.
 
@@ -29,7 +29,7 @@
 
 | 작업 영역 | 기준 문서 |
 | --- | --- |
-| 프로젝트 목표와 범위 | `docs/project_charter/OfficeOps_hub_프로젝트개요서_v1.9.0.md` |
+| 프로젝트 목표와 범위 | `docs/project_charter/OfficeOps_hub_프로젝트개요서_v1.12.2.md` |
 | 상세 기능 범위 | `docs/project_charter/OfficeOps_hub_상세계획서_v1.3.0.md` |
 | 팀 운영, Git, PR 규칙 | `docs/team_charter/OfficeOps_hub_팀운영문서_v1.9.0.md` |
 | 요구사항 | `docs/specifications/OfficeOps_hub_요구사항정의서_v1.3.0.md` |
